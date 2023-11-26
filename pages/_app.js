@@ -1,9 +1,11 @@
 import '../styles/globals.scss';
+import '../styles/admin/admin-sidebar.css';
 import Layout from '../components/Layout/Layout';
 
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import 'react-quill/dist/quill.snow.css';
 
 // NProgress Customization
 NProgress.configure({
@@ -19,11 +21,9 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  );
+  const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
+  
+  return getLayout(<Component {...pageProps} />);
 }
 
 export default MyApp;
