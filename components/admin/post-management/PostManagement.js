@@ -15,7 +15,7 @@ const PostManagement = () => {
       id: '2',
       author: 'John',
       views: 42,
-      title: '10 Downing Street',
+      title: '10 Downing Street 2',
     },
   ];
 
