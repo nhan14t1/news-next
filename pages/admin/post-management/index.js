@@ -1,11 +1,12 @@
 import AdminLayout from "../../../components/admin/AdminLayout";
+import PostManagement from "../../../components/admin/post-management/PostManagement";
 
-function PostManagement() {
-    return <>Post</>;
+function PostManagementPage() {
+  return <PostManagement />;
 }
 
-PostManagement.getLayout = function(page) {
-    return <AdminLayout>{page}</AdminLayout>;
+PostManagementPage.getLayout = function (page) {
+  return <AdminLayout>{page}</AdminLayout>;
 }
 
-export default PostManagement;
+export default PostManagementPage;
