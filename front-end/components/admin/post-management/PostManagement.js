@@ -122,7 +122,6 @@ const PostManagement = () => {
             <><FontAwesomeIcon icon={faPlus} />&nbsp; Bài viết mới</>
           </Button>
         </Link>
-
       </div>
 
       <Table dataSource={data} columns={columns} className="mt-2" />;

@@ -28,7 +28,6 @@ export const fetch = async (url) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.getItem(STORAGE_KEY.ACCESS_TOKEN_KEY),
         }
       });
 

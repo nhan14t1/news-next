@@ -55,9 +55,7 @@ function Home() {
                 query: { id: item.slug },
               }}
             >
-              <a>
-                <TinyCard title={item.title} bgColor={bgColor[idx]} />
-              </a>
+              <TinyCard title={item.title} bgColor={bgColor[idx]} />
             </Link>
           ))}
         </div>
@@ -81,14 +79,12 @@ function Home() {
                 query: { id: item.slug },
               }}
             >
-              <a>
-                <Card
-                  title={item.title}
-                  headline={item.introText}
-                  thumbnail={TEST_IMAGE_URL}
-                  bgColor={bgColor}
-                />
-              </a>
+              <Card
+                title={item.title}
+                headline={item.introText}
+                thumbnail={TEST_IMAGE_URL}
+                bgColor={bgColor}
+              />
             </Link>
           ))}
         </div>

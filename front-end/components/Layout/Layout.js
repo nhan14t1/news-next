@@ -73,22 +73,19 @@ function Layout({ children }) {
                   pathname: '/article/',
                   query: { id: item.id },
                 }}
+                onClick={handleReset}
+                ref={
+                  content.length === idx + 1 && content.length >= 15
+                    ? lastNewsElementRef
+                    : null
+                }
               >
-                <a
-                  onClick={handleReset}
-                  ref={
-                    content.length === idx + 1 && content.length >= 15
-                      ? lastNewsElementRef
-                      : null
-                  }
-                >
-                  <Card
-                    webTitle={item.webTitle}
-                    headline={item.fields.headline}
-                    thumbnail={item.fields.thumbnail}
-                    bgColor={bgColor}
-                  />
-                </a>
+                <Card
+                  webTitle={item.webTitle}
+                  headline={item.fields.headline}
+                  thumbnail={item.fields.thumbnail}
+                  bgColor={bgColor}
+                />
               </Link>
             );
           })}

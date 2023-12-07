@@ -1,23 +1,26 @@
+"use client"
 import Link from 'next/link';
 import { AdminContext } from '../../../shared/contexts/AdminContext';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ROLES } from '../../../shared/constants/app-const';
 import { useRouter } from 'next/router';
 import AuthContext from '../../../shared/contexts/AuthContext';
 import AppContext from '../../../shared/contexts/AppContext';
 import AppLoading from '../../shared/AppLoading';
 const AdminSidebar = ({ sidebarOpen, closeSidebar }) => {
-  const { user } = useContext(AuthContext);
+  const router = useRouter();
+  const { user, isSSR } = useContext(AuthContext);
   const { loading } = useContext(AppContext);
   const isAdmin = () => {
     return user && user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.Name);
   }
 
-  if (typeof window == 'object' && !isAdmin()) {
-    const router = useRouter();
-    router.push('/admin/login');
-    return <></>;
-  }
+  useEffect(() => {
+    if (!isSSR && !isAdmin()) {
+      router.push('/admin/login');
+      return <></>;
+    }
+  }, [isSSR]);
 
   return (
     <AdminContext.Provider value={{ sidebarOpen }}>

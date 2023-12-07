@@ -1,5 +1,6 @@
+"use client"
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from 'next/router';
 import { ACCESS_TOKEN_KEY } from "../constants/storage-key-const";
@@ -7,16 +8,15 @@ import { ACCESS_TOKEN_KEY } from "../constants/storage-key-const";
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  if (typeof window === 'undefined') {
-    return <></>;
-  }
+  const [user, setUser] = useState(null);
+  const [isSSR, setIsSSR] = useState(true);
 
-  const [user, setUser] = useState(() => {
+  useEffect(() => {
     if (localStorage.getItem(ACCESS_TOKEN_KEY)) {
-      return jwtDecode(localStorage.getItem(ACCESS_TOKEN_KEY));
+      setUser(jwtDecode(localStorage.getItem(ACCESS_TOKEN_KEY)));
     }
-    return null;
-  });
+    setIsSSR(false);
+  }, []);
  
   const router = useRouter();
  
@@ -31,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
   };
   
   return (
-    <AuthContext.Provider value={{ user, login }}>
+    <AuthContext.Provider value={{ user, login, isSSR }}>
       {children}
     </AuthContext.Provider>
   );

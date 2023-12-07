@@ -19,7 +19,7 @@ function NotFound() {
       <p>
         Go back to the{' '}
         <Link href='/'>
-          <a>Home page</a>
+          Home page
         </Link>
       </p>
     </div>

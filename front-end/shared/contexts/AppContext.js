@@ -1,14 +1,10 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 const AppContext = createContext({ loading: false});
 
 export const AppContextProvider = ({ children }) => {
-  if (typeof window === 'undefined') {
-    return <></>;
-  }
-
   const [loading, setLoading] = useState(false);
-  
+
   return (
     <AppContext.Provider value={{ loading, setLoading }}>
       {children}
