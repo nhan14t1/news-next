@@ -22,7 +22,7 @@ const AdminLogin = () => {
   return (
     <div className={styles['account-page']}>
       <Head>
-        <title>{WEB_NAME} - Admin Login</title>
+        <title>{`${WEB_NAME} - Admin Login`}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="stylesheet" href="/assets/css/admin-login.css"></link>
       </Head>
