@@ -1,5 +1,7 @@
 import '../styles/globals.scss';
 import '../styles/admin/admin-sidebar.css';
+import '../styles/app-box.scss';
+import '../styles/admin/new-post.scss';
 import Layout from '../components/Layout/Layout';
 
 import Router from 'next/router';
@@ -24,8 +26,9 @@ Router.events.on('routeChangeError', () => NProgress.done());
 
 function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
-  
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    <Component {...pageProps} />
+  );
 }
 
 export default MyApp;

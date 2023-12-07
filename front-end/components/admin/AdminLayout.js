@@ -1,11 +1,17 @@
 import AdminSidebar from './Sidebar/AdminSidebar';
+import { AuthContextProvider } from '../../shared/contexts/AuthContext';
+import { AppContextProvider } from '../../shared/contexts/AppContext';
 
-function AdminLayout({ children }) {
+const AdminLayout = ({ children }) => {
   return (
-    <div className='admin-layout'>
-      <AdminSidebar sidebarOpen={true} openSidebar={() => {}} />
-      {children}
-    </div>
+    <AuthContextProvider>
+      <AppContextProvider>
+        <div className='admin-layout'>
+          <AdminSidebar sidebarOpen={true} openSidebar={() => { }} />
+          {children}
+        </div>
+      </AppContextProvider>
+    </AuthContextProvider>
   );
 }
 

@@ -1,7 +1,7 @@
 import styles from './Card.module.scss';
 import PropTypes from 'prop-types';
 
-function Card({ webTitle, headline, thumbnail, bgColor }) {
+function Card({ title, headline, thumbnail, bgColor }) {
   const blankCard = () => {
     return (
       <div className={styles.fake}>
@@ -14,13 +14,13 @@ function Card({ webTitle, headline, thumbnail, bgColor }) {
     <div className={styles.wrapper}>
       <figure className={styles.figure}>
         {thumbnail ? (
-          <img className={styles.figure_img} src={thumbnail} alt={webTitle} />
+          <img className={styles.figure_img} src={thumbnail} alt={title} />
         ) : (
           blankCard()
         )}
         <figcaption className={styles.figcaption}>
-          <div className={styles.webTitle}>
-            <p>{webTitle}</p>
+          <div className={styles.title}>
+            <p>{title}</p>
           </div>
 
           <div className={styles.headline}>
@@ -37,7 +37,7 @@ function Card({ webTitle, headline, thumbnail, bgColor }) {
 }
 
 Card.propTypes = {
-  webTitle: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   headline: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,
   bgColor: PropTypes.string,

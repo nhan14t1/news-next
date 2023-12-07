@@ -1,11 +1,11 @@
 import styles from './TinyCard.module.scss';
 import PropTypes from 'prop-types';
 
-function TinyCard({ webTitle, bgColor }) {
+function TinyCard({ title, bgColor }) {
   return (
     <div className={styles.wrapper}>
-      <div className={styles.webTitle}>
-        <p>{webTitle}</p>
+      <div className={styles.title}>
+        <p>{title}</p>
       </div>
       <div
         className={styles.baseline}
@@ -16,7 +16,7 @@ function TinyCard({ webTitle, bgColor }) {
 }
 
 TinyCard.propTypes = {
-  webTitle: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   bgColor: PropTypes.string,
 };
 

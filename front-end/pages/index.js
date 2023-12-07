@@ -12,18 +12,17 @@ import {
 } from '../components';
 import styles from '../styles/Home.module.scss';
 import useComboFetch from '../components/Hooks/useComboFetch';
+import { CATEGORIES, TEST_IMAGE_URL } from '../shared/constants/app-const';
 
 function Home() {
-  const router = useRouter();
-  const [sorting, setSorting] = useState('newest');
-  const { loading, error, news, sport, culture, lifeStyle } =
-    useComboFetch(sorting);
+  const { loading, error, vietNamPosts, globalPosts, videoPosts, topPosts } =
+    useComboFetch();
 
   // Combo grid layout
-  const sectionTopStory = (content) => {
-    const primary = content.slice(0, 1);
-    const secondary = content.slice(-3);
-    const tertiary = content.slice(1, 5);
+  const sectionTopStory = () => {
+    const primary = topPosts.slice(0, 1);
+    const secondary = topPosts.slice(-3);
+    const tertiary = topPosts.slice(1, 5);
 
     return (
       <>
@@ -50,14 +49,14 @@ function Home() {
         <div className={styles.grid}>
           {content.map((item, idx) => (
             <Link
-              key={item.id}
+              key={`lnkTinyNews${item.id}`}
               href={{
                 pathname: '/article/',
-                query: { id: item.id },
+                query: { id: item.slug },
               }}
             >
               <a>
-                <TinyCard webTitle={item.webTitle} bgColor={bgColor[idx]} />
+                <TinyCard title={item.title} bgColor={bgColor[idx]} />
               </a>
             </Link>
           ))}
@@ -68,22 +67,25 @@ function Home() {
 
   // 3-column layout grid
   const sectionCards = (content, bgColor) => {
+    if (!content || !content.length) {
+      return <div className='pt-5'>Không có nội dung</div>
+    }
     return (
       <section className={styles.grid_wrap}>
         <div className={styles.grid}>
           {content.map((item) => (
             <Link
-              key={item.id}
+              key={`lnkNews${item.id}`}
               href={{
-                pathname: '/article/',
-                query: { id: item.id },
+                pathname: `/article/`,
+                query: { id: item.slug },
               }}
             >
               <a>
                 <Card
-                  webTitle={item.webTitle}
-                  headline={item.fields.headline}
-                  thumbnail={item.fields.thumbnail}
+                  title={item.title}
+                  headline={item.introText}
+                  thumbnail={TEST_IMAGE_URL}
                   bgColor={bgColor}
                 />
               </a>
@@ -95,7 +97,7 @@ function Home() {
   };
 
   const handleSorting = (e) => {
-    setSorting(e.target.value);
+    // setSorting(e.target.value);
   };
 
   // Error handling and loading
@@ -117,8 +119,8 @@ function Home() {
     return (
       <main className={styles.main}>
         <div className={styles.heading}>
-          <h1>Top Stories</h1>
-          <div className={styles.toolkit}>
+          <h1>Đọc nhiều nhất</h1>
+          {/* <div className={styles.toolkit}>
             <Button
               onClick={() => {
                 router.push('/bookmarks');
@@ -127,19 +129,19 @@ function Home() {
               View Bookmark
             </Button>
             <Select onChange={handleSorting} orderBy={sorting} />
-          </div>
+          </div> */}
         </div>
 
-        {sectionTopStory(news)}
+        {sectionTopStory()}
 
-        <h2>Sports</h2>
-        {sectionCards(sport, '#d32f2f')}
+        <h2>{CATEGORIES.VietNam.name}</h2>
+        {sectionCards(vietNamPosts, '#d32f2f')}
 
-        <h2>Culture</h2>
-        {sectionCards(culture, '#FFC107')}
+        <h2>{CATEGORIES.Global.name}</h2>
+        {sectionCards(globalPosts, '#FFC107')}
 
-        <h2>Lifestyle</h2>
-        {sectionCards(lifeStyle, '#388E3C')}
+        <h2>Video</h2>
+        {sectionCards(videoPosts, '#388E3C')}
       </main>
     );
   };
