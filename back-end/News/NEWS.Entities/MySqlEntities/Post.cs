@@ -19,6 +19,8 @@ public partial class Post
 
     public int Status { get; set; }
 
+    public int? ThumbnailId { get; set; }
+
     public long CreatedDate { get; set; }
 
     public long UpdatedDate { get; set; }
@@ -28,6 +30,8 @@ public partial class Post
     public bool IsDeleted { get; set; }
 
     public virtual ICollection<PostCategory> PostCategories { get; set; } = new List<PostCategory>();
+
+    public virtual FileManagement? Thumbnail { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

@@ -29,6 +29,7 @@ public partial class NewsContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -66,6 +67,8 @@ public partial class NewsContext : DbContext
 
             entity.ToTable("Post");
 
+            entity.HasIndex(e => e.ThumbnailId, "ThumbnailId");
+
             entity.HasIndex(e => e.UserId, "UserId");
 
             entity.Property(e => e.Content)
@@ -82,6 +85,10 @@ public partial class NewsContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(2000)
                 .UseCollation("utf8mb4_0900_ai_ci");
+
+            entity.HasOne(d => d.Thumbnail).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.ThumbnailId)
+                .HasConstraintName("post_ibfk_2");
 
             entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)

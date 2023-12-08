@@ -16,4 +16,6 @@ public partial class FileManagement
     public long CreatedDate { get; set; }
 
     public bool IsUsed { get; set; }
+
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 }

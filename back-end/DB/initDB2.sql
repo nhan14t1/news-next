@@ -38,6 +38,16 @@ CREATE TABLE `NewsNext`.Category (
 
 INSERT INTO `NewsNext`.Category(`Name`) values ('Showbiz Việt Nam'), ('Showbiz Quốc Tế');
 
+CREATE TABLE `NewsNext`.FileManagement (
+	Id int NOT NULL AUTO_INCREMENT,
+    Name varchar(255) NOT NULL,
+    Extension VARCHAR(20) NOT NULL DEFAULT '',
+    Type int NOT NULL default 1,
+    CreatedDate BIGINT NOT NULL,
+    IsUsed tinyint(1) not null default 0,
+    PRIMARY KEY (Id)
+);
+
 CREATE TABLE `NewsNext`.Post (
     Id int NOT NULL AUTO_INCREMENT,
     Title varchar(2000) character set utf8mb4 NOT NULL,
@@ -46,12 +56,14 @@ CREATE TABLE `NewsNext`.Post (
     Content TEXT character set utf8mb4 NOT NULL,
     UserId int not null,
     Status int not null default 1,
+    ThumbnailId int,
     CreatedDate BigInt not null,
     UpdatedDate BigInt not null default 0,
     ScheduleDate BigInt not null default 0,
     IsDeleted tinyint(1) not null default 0,
     PRIMARY KEY (Id),
-    FOREIGN KEY (UserId) REFERENCES User(Id)
+    FOREIGN KEY (UserId) REFERENCES User(Id),
+    FOREIGN KEY (ThumbnailId) REFERENCES FileManagement(Id)
 );
 
 CREATE TABLE `NewsNext`.PostCategory (
@@ -62,14 +74,4 @@ CREATE TABLE `NewsNext`.PostCategory (
     UNIQUE KEY `post_category_id` (PostId, CategoryId),
     FOREIGN KEY (PostId) REFERENCES Post(Id),
 	FOREIGN KEY (CategoryId) REFERENCES Category(Id)
-);
-
-CREATE TABLE `NewsNext`.FileManagement (
-	Id int NOT NULL AUTO_INCREMENT,
-    Name varchar(255) NOT NULL,
-    Extension VARCHAR(20) NOT NULL DEFAULT '',
-    Type int NOT NULL default 1,
-    CreatedDate BIGINT NOT NULL,
-    IsUsed tinyint(1) not null default 0,
-    PRIMARY KEY (Id)
 );
