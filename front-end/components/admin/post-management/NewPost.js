@@ -1,12 +1,12 @@
 import { Button, Input, Select } from 'antd';
 import React, { useState } from 'react';
-import ReactQuill from 'react-quill';
-import { CATEGORIES } from '../../../shared/constants/app-const';
+import { CATEGORIES, IMAGE_POST_PREFIX } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { post } from '../../../shared/utils/apiUtils';
 import { useRouter } from 'next/router';
+import HtmlEditor from '../../shared/HtmlEditor';
 
 const NewPost = props => {
   const router = useRouter();
@@ -19,17 +19,27 @@ const NewPost = props => {
       setPostObj({ ...postObj, slug: toSlug(postObj.title) });
     }
   }
-  
 
   const onCreate = () => {
     if (!validateCreation()) {
       return;
     }
 
-    post('/admin/post', postObj)
+    var imageUrls = processImageUrls();
+
+    post('/admin/post', {...postObj, imageUrls})
       .then(res => {
         router.push('/admin/post-management');
       })
+  }
+
+  // In case we insert an image, then we delete the image on UI => Need to remove this image to save server storage.
+  const processImageUrls = () => {
+    // To make sure the regex won't detect 2 result into 1 result
+    const content = (postObj.content || '').replaceAll(`<img`, `\n<img`);
+
+    const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(jpg|png|jpeg|bmp|svg)`, 'g');
+    return content.match(pattern);
   }
 
   const validateCreation = () => {
@@ -92,7 +102,7 @@ const NewPost = props => {
 
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
-        <ReactQuill key='html-editor' theme="snow" value={postObj.content} onChange={(content) => setPostObj({ ...postObj, content })} className='quill-editor' />
+        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })}/>
       </div>
 
       <div className='mt-5 d-flex'>

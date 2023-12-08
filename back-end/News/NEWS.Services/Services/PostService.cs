@@ -1,28 +1,31 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NEWS.Entities.Constants;
-using NEWS.Entities.Dto;
 using NEWS.Entities.Extensions;
+using NEWS.Entities.Models.Dto;
+using NEWS.Entities.Models.Responses;
+using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
 using NEWS.Entities.Repositories;
-using NEWS.Entities.Responses;
 using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
-using NEWS.Entities.ViewModels;
 
 namespace NEWS.Services.Services
 {
     public class PostService : BaseService<Post>, IPostService
     {
         private IUserRepository _userRepository;
+        private IFileManagementRepository _fileManagementRepository;
         private IMapper _mapper;
 
         public PostService(IUnitOfWork unitOfWork,
             IUserRepository userRepository,
+            IFileManagementRepository fileManagementRepository,
             IMapper mapper)
             : base(unitOfWork)
         {
             _userRepository = userRepository;
+            _fileManagementRepository = fileManagementRepository;
             _mapper = mapper;
         }
 
@@ -34,7 +37,7 @@ namespace NEWS.Services.Services
                 Id = request.Id,
                 Title = request.Title ?? "",
                 IntroText = request.IntroText ?? "",
-                Slug = request.Slug ?? "",
+                Slug = !string.IsNullOrWhiteSpace(request.Slug) ? request.Slug.Trim().ToLower() : "",
                 Content = request.Content ?? "",
                 UserId = user.Id,
                 Status = request.Status,
@@ -46,6 +49,12 @@ namespace NEWS.Services.Services
                     {
                         CategoryId = categoryId
                     }).ToList() : new List<PostCategory>();
+
+            // Flag image to use. The image isn't used will be removed by the job
+            var images = request.ImageUrls != null
+                ? await _fileManagementRepository.GetAll(_ => !_.IsUsed && request.ImageUrls.Contains(_.Name)).ToListAsync()
+            : new List<FileManagement>();
+
             try
             {
                 await _unitOfWork.BeginTransaction();
@@ -58,6 +67,12 @@ namespace NEWS.Services.Services
                     _unitOfWork.DbContext.Add(postCategory);
                 }
 
+                foreach (var image in images)
+                {
+                    image.IsUsed = true;
+                    _unitOfWork.DbContext.Update(image);
+                }
+
                 await _unitOfWork.Commit();
             }
             catch (Exception e)
@@ -66,7 +81,6 @@ namespace NEWS.Services.Services
                 throw;
             }
 
-            var a = _userRepository.GetAll(_ => true).Include(_ => _.UserRoles).ThenInclude(x=> x.Role).ToList();
             newPost.PostCategories = postCategories.Select(_ => new PostCategory {
                 Id = _.Id,
                 PostId = _.PostId,
@@ -91,17 +105,20 @@ namespace NEWS.Services.Services
         {
             var vietNamPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.VietNam))
+                .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(3)
                 .ToListAsync();
             var globalPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.Global))
+                .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(3)
                 .ToListAsync();
             
             var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;
             var topPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
+                .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(8)
                 .ToListAsync();
@@ -112,6 +129,16 @@ namespace NEWS.Services.Services
                 GlobalPosts = _mapper.Map<List<PostDto>>(globalPosts),
                 TopPosts = _mapper.Map<List<PostDto>>(topPosts)
             };
+        }
+
+        public async Task<PostDto> GetBySlug(string slug)
+        {
+            slug = slug.ToLower();
+            var post = await _repository.GetAll(_ => _.Slug == slug)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<PostDto>(post);
         }
     }
 }

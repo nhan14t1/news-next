@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using NEWS.Services.AutoMappings;
 using NEWS.WebAPI.Extensions;
 using NEWS.WebAPI.JwtUtils;
+using NEWS.WebAPI.Services;
 using System.Text;
 using System.Text.Json;
 
@@ -55,8 +56,7 @@ services.AddAuthentication(x =>
 });
 
 services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
-
-
+services.AddSingleton<IFileService, FileService>();
 
 services.AddControllers().AddJsonOptions(options =>
 {
@@ -84,6 +84,7 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+app.UseFileServer();
 app.UseAuthorization();
 
 app.MapControllers();

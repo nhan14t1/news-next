@@ -15,13 +15,14 @@ const getOptions = () => {
 const getFileOptions = () => {
   return {
     headers: {
+      'Content-Type': 'multipart/form-data',
       Authorization: 'Bearer ' + localStorage.getItem(STORAGE_KEY.ACCESS_TOKEN_KEY),
     },
     // NODE_TLS_REJECT_UNAUTHORIZED:'0'
   };
 }
 
-export const fetch = async (url) => {
+export const appFetch = async (url) => {
   try {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     const res = await fetch(BASE_API_URL + url,
@@ -47,6 +48,14 @@ export const get = (url, isCatchError = true) => {
 
 export const post = (url, data, isCatchError = true) => {
   return axios.post(BASE_API_URL + url, data, getOptions())
+    .catch((res) => {
+      handleError(res.response, isCatchError);
+      return res;
+    });;
+}
+
+export const postFile = (url, data, isCatchError = true) => {
+  return axios.post(BASE_API_URL + url, data, getFileOptions())
     .catch((res) => {
       handleError(res.response, isCatchError);
       return res;

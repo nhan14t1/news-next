@@ -1,7 +1,7 @@
-﻿using NEWS.Entities.Dto;
+﻿using NEWS.Entities.Models.Dto;
+using NEWS.Entities.Models.Responses;
+using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
-using NEWS.Entities.Responses;
-using NEWS.Entities.ViewModels;
 
 namespace NEWS.Entities.Services
 {
@@ -12,5 +12,7 @@ namespace NEWS.Entities.Services
         Task<List<PostDto>> GetAllAsync();
 
         Task<HomePageResult> GetHomePageData();
+
+        Task<PostDto> GetBySlug(string slug);
     }
 }

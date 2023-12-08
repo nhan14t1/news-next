@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NEWS.Entities.MySqlEntities;
-using NEWS.Entities.Responses;
+using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
-using NEWS.Entities.ViewModels;
-using NEWS.Services.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,7 +25,6 @@ namespace NEWS.WebAPI.Controllers.Admin
         public async Task<ActionResult> Add([FromBody] PostVM request)
         {
             var email = User.Identity.Name;
-            var test = User.Claims.ToList();
             var post = await _postService.AddAsync(request, email);
             return Ok(post);
         }

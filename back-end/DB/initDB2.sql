@@ -49,6 +49,7 @@ CREATE TABLE `NewsNext`.Post (
     CreatedDate BigInt not null,
     UpdatedDate BigInt not null default 0,
     ScheduleDate BigInt not null default 0,
+    IsDeleted tinyint(1) not null default 0,
     PRIMARY KEY (Id),
     FOREIGN KEY (UserId) REFERENCES User(Id)
 );
@@ -61,4 +62,14 @@ CREATE TABLE `NewsNext`.PostCategory (
     UNIQUE KEY `post_category_id` (PostId, CategoryId),
     FOREIGN KEY (PostId) REFERENCES Post(Id),
 	FOREIGN KEY (CategoryId) REFERENCES Category(Id)
+);
+
+CREATE TABLE `NewsNext`.FileManagement (
+	Id int NOT NULL AUTO_INCREMENT,
+    Name varchar(255) NOT NULL,
+    Extension VARCHAR(20) NOT NULL DEFAULT '',
+    Type int NOT NULL default 1,
+    CreatedDate BIGINT NOT NULL,
+    IsUsed tinyint(1) not null default 0,
+    PRIMARY KEY (Id)
 );

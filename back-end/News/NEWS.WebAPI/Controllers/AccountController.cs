@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NEWS.Entities.Models.Responses;
+using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
-using NEWS.Entities.Responses;
 using NEWS.Entities.Services;
-using NEWS.Entities.ViewModels;
 using NEWS.WebAPI.JwtUtils;
 
 namespace NEWS.WebAPI.Controllers

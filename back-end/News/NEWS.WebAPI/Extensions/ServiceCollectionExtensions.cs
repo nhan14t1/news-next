@@ -42,6 +42,7 @@ namespace NEWS.WebAPI.Extensions
                 .AddScoped<IPostRepository, PostRepository>()
                 .AddScoped<ICategoryRepository, CategoryRepository>()
                 .AddScoped<IPostCategoryRepository, PostCategoryRepository>()
+                .AddScoped<IFileManagementRepository, FileManagementRepository>()
                 ;
         }
 
@@ -58,6 +59,7 @@ namespace NEWS.WebAPI.Extensions
                 .AddScoped<IPostService, PostService>()
                 .AddScoped<ICategoryService, CategoryService>()
                 .AddScoped<IPostCategoryService, PostCategoryService>()
+                .AddScoped<IFileManagementService, FileManagementService>()
                 ;
         }
     }

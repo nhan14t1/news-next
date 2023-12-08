@@ -1,6 +1,6 @@
 ﻿using NEWS.Entities.MySqlEntities;
 
-namespace NEWS.Entities.Dto
+namespace NEWS.Entities.Models.Dto
 {
     public class PostDto
     {

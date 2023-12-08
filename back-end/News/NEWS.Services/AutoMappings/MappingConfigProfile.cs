@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NEWS.Entities.Dto;
+using NEWS.Entities.Models.Dto;
 using NEWS.Entities.MySqlEntities;
 
 namespace NEWS.Services.AutoMappings

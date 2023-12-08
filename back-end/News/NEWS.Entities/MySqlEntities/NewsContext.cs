@@ -17,6 +17,8 @@ public partial class NewsContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<FileManagement> FileManagements { get; set; }
+
     public virtual DbSet<Post> Posts { get; set; }
 
     public virtual DbSet<PostCategory> PostCategories { get; set; }
@@ -43,6 +45,19 @@ public partial class NewsContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .UseCollation("utf8mb4_0900_ai_ci");
+        });
+
+        modelBuilder.Entity<FileManagement>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("FileManagement");
+
+            entity.Property(e => e.Extension)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("''");
+            entity.Property(e => e.Name).HasMaxLength(255);
+            entity.Property(e => e.Type).HasDefaultValueSql("'1'");
         });
 
         modelBuilder.Entity<Post>(entity =>

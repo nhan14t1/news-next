@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NEWS.Entities.ViewModels
+namespace NEWS.Entities.Models.ViewModels
 {
     public class LoginVM
     {

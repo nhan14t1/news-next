@@ -21,5 +21,12 @@ namespace NEWS.WebAPI.Controllers
             var data = await _postService.GetHomePageData();
             return Ok(data);
         }
+
+        [HttpGet("{slug}")]
+        public async Task<ActionResult> GetBySlug(string slug)
+        {
+            var data = await _postService.GetBySlug(slug);
+            return Ok(data);
+        }
     }
 }

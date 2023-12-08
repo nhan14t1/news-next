@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NEWS.Entities.Responses
+namespace NEWS.Entities.Models.Responses
 {
     public class LoginResult
     {

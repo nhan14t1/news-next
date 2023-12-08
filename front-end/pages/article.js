@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import dynamic from 'next/dynamic';
 import styles from '../styles/Article.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, ScrollToTop } from '../components';
+import { appFetch } from '../shared/utils/apiUtils';
+import { TEST_IMAGE_URL } from '../shared/constants/app-const';
+import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
 
@@ -37,21 +40,21 @@ function Article({ news }) {
           <article className={styles.content_wrapper}>
             <Button onClick={handleClick}>{buttonText}</Button>
             <p className={styles.date}>
-              {iconCalendar} {news.webPublicationDate}
+              {iconCalendar} {moment(news.createdDate).format('DD/MM/YYYY')}
             </p>
-            <h2>{news.webTitle}</h2>
-            <h4>{news.fields.headline}</h4>
+            <h2>{news.title}</h2>
+            <h4>{news.introText}</h4>
             <hr className={styles.divider} />
             <div
               className={styles.content}
-              dangerouslySetInnerHTML={{ __html: news.fields.body }}
+              dangerouslySetInnerHTML={{ __html: news.content }}
             />
           </article>
 
           <article className={styles.media_wrapper}>
-            {news.fields.thumbnail ? (
+            {news.thumbnail ? (
               <Image
-                src={news.fields.thumbnail}
+                src={TEST_IMAGE_URL}
                 alt='Article media'
                 width={500}
                 height={300}
@@ -62,7 +65,7 @@ function Article({ news }) {
               </div>
             )}
 
-            <p className={styles.figcaption}>{news.fields.headline}</p>
+            <p className={styles.figcaption}>{news.introText}</p>
           </article>
         </article>
       </main>
@@ -74,19 +77,15 @@ function Article({ news }) {
 }
 
 Article.getInitialProps = async ({ query }) => {
-  const { publicRuntimeConfig } = getConfig();
   const { id } = query;
-  const baseUrl = `${publicRuntimeConfig.GUARDIAN_API_URL}${id}?show-elements=image&show-fields=body,headline,thumbnail&api-key=${publicRuntimeConfig.GUARDIAN_API_KEY}`;
-  const res = await fetch(baseUrl);
-  const data = await res.json();
-
+  const data = await appFetch(`/post/${id}`);
   if (!data) {
     return {
       notFound: true,
     };
   }
 
-  return { news: data.response.content };
+  return { news: data };
 };
 
 export default Article;

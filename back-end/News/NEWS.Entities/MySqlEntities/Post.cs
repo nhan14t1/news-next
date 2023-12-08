@@ -25,6 +25,8 @@ public partial class Post
 
     public long ScheduleDate { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public virtual ICollection<PostCategory> PostCategories { get; set; } = new List<PostCategory>();
 
     public virtual User User { get; set; } = null!;

@@ -1,6 +1,6 @@
-﻿using NEWS.Entities.Dto;
+﻿using NEWS.Entities.Models.Dto;
 
-namespace NEWS.Entities.Responses
+namespace NEWS.Entities.Models.Responses
 {
     public class HomePageResult
     {
