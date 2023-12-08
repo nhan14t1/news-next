@@ -18,6 +18,8 @@ namespace NEWS.Entities.Models.Dto
 
         public int Status { get; set; }
 
+        public int? ThumbnailId { get; set; }
+
         public long CreatedDate { get; set; }
 
         public long UpdatedDate { get; set; }
