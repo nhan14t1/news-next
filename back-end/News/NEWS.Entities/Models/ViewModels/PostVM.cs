@@ -1,4 +1,5 @@
-﻿using NEWS.Entities.MySqlEntities;
+﻿using NEWS.Entities.Models.Others;
+using NEWS.Entities.MySqlEntities;
 
 namespace NEWS.Entities.Models.ViewModels
 {
@@ -6,5 +7,6 @@ namespace NEWS.Entities.Models.ViewModels
     {
         public List<int> CategoryIds { get; set; }
         public List<string> ImageUrls { get; set; }
+        public ImageInfo Thumbnail { get; set; }
     }
 }

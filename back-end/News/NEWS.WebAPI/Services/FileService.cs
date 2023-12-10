@@ -1,5 +1,7 @@
 ﻿using NEWS.Entities.Constants;
 using NEWS.Entities.Models.Others;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace NEWS.WebAPI.Services
 {
@@ -7,6 +9,9 @@ namespace NEWS.WebAPI.Services
     {
         Task<FileInformation> UploadAsync(IFormFile formFile, FileType type, CancellationToken cancellationToken = default);
         Task<FileInformation> UploadImageAsync(IFormFile formFile, CancellationToken cancellationToken = default);
+        Task<FileInformation> UploadBase64Async(ImageInfo info, FileType type);
+
+        Task<FileInformation> UploadThumbnailBase64Async(ImageInfo info);
     }
 
     public class FileService : IFileService
@@ -41,7 +46,7 @@ namespace NEWS.WebAPI.Services
             memoryStream.Position = 0;
 
             // Write file to System path
-            var filePath = Path.Combine("wwwroot/", "images/", fileName);
+            var filePath = Path.Combine("wwwroot/", "images/posts/", fileName);
             using var fileStream = new FileStream(filePath, FileMode.Create);
 
             // Write Memory Stream to FileStream
@@ -52,6 +57,32 @@ namespace NEWS.WebAPI.Services
                 Name = fileName,
                 Extension= fileExtension,
             };
+        }
+
+        public async Task<FileInformation> UploadBase64Async(ImageInfo info, FileType type)
+        {
+            if (info == null && string.IsNullOrEmpty(info.Base64))
+            {
+                return null;
+            }
+
+            var fileExtension = Path.GetExtension(info.Name).Substring(1).ToLower();
+            var fileName = GenerateFileName(fileExtension, type);
+
+            var bytes = Convert.FromBase64String(Regex.Replace(info.Base64, @"data:image/.*base64,", ""));
+            var filePath = Path.Combine("wwwroot/", "images/thumbnails/", fileName);
+            await File.WriteAllBytesAsync(filePath, bytes);
+
+            return new FileInformation
+            {
+                Name = fileName,
+                Extension = fileExtension,
+            };
+        }
+
+        public async Task<FileInformation> UploadThumbnailBase64Async(ImageInfo info)
+        {
+            return await UploadBase64Async(info, FileType.PostThumbnail);
         }
 
         public async Task<FileInformation> UploadImageAsync(IFormFile formFile, CancellationToken cancellationToken = default)

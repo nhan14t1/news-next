@@ -9,5 +9,7 @@ namespace NEWS.Entities.Services
             DateTime? createdDate = null, bool isUsed = false);
 
         Task<FileManagement> AddImages(string fileName, string fileExtension);
+        
+        Task<FileManagement> AddThumbnail(string fileName, string fileExtension);
     }
 }

@@ -1,4 +1,5 @@
-﻿using NEWS.Entities.MySqlEntities;
+﻿using NEWS.Entities.Models.Others;
+using NEWS.Entities.MySqlEntities;
 
 namespace NEWS.Entities.Models.Dto
 {
@@ -20,6 +21,8 @@ namespace NEWS.Entities.Models.Dto
 
         public int? ThumbnailId { get; set; }
 
+        public ImageInfo Thumbnail { get; set; }
+
         public long CreatedDate { get; set; }
 
         public long UpdatedDate { get; set; }
@@ -31,6 +34,8 @@ namespace NEWS.Entities.Models.Dto
         public string UserFirstName { get; set; }
 
         public string UserLastName { get; set; }
+
+        public string ThumbnailFileName { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
     }

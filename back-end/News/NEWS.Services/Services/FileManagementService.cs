@@ -36,5 +36,10 @@ namespace NEWS.Services.Services
         {
             return await Add(fileName, fileExtension, FileType.PostImage);
         }
+        
+        public async Task<FileManagement> AddThumbnail(string fileName, string fileExtension)
+        {
+            return await Add(fileName, fileExtension, FileType.PostThumbnail);
+        }
     }
 }

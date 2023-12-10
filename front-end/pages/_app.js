@@ -3,6 +3,7 @@ import '../styles/admin/admin-sidebar.css';
 import '../styles/app-box.scss';
 import '../styles/admin/new-post.scss';
 import '../styles/scrollbar.scss';
+import '../styles/admin/thumbnail-upload.scss';
 import Layout from '../components/Layout/Layout';
 
 import Router from 'next/router';

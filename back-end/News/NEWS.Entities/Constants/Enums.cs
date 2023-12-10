@@ -22,5 +22,6 @@
     public enum FileType
     {
         PostImage = 1,
+        PostThumbnail,
     }
 }

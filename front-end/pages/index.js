@@ -12,7 +12,7 @@ import {
 } from '../components';
 import styles from '../styles/Home.module.scss';
 import useComboFetch from '../components/Hooks/useComboFetch';
-import { CATEGORIES, TEST_IMAGE_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, CATEGORIES, TEST_IMAGE_URL } from '../shared/constants/app-const';
 
 function Home() {
   const { loading, error, vietNamPosts, globalPosts, videoPosts, topPosts } =
@@ -82,7 +82,7 @@ function Home() {
               <Card
                 title={item.title}
                 headline={item.introText}
-                thumbnail={TEST_IMAGE_URL}
+                thumbnail={item.thumbnailFileName ? `${BASE_THUMBNAIL_URL}/${item.thumbnailFileName}` : TEST_IMAGE_URL}
                 bgColor={bgColor}
               />
             </Link>

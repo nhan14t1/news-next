@@ -9,6 +9,7 @@ using NEWS.Entities.MySqlEntities;
 using NEWS.Entities.Repositories;
 using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace NEWS.Services.Services
 {
@@ -29,7 +30,7 @@ namespace NEWS.Services.Services
             _mapper = mapper;
         }
 
-        public async Task<Post> AddAsync(PostVM request, string email)
+        public async Task<Post> AddAsync(PostVM request, string email, FileManagement thumbnail)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             var newPost = new Post
@@ -58,6 +59,15 @@ namespace NEWS.Services.Services
             try
             {
                 await _unitOfWork.BeginTransaction();
+
+                if (thumbnail != null)
+                {
+                    newPost.ThumbnailId = thumbnail.Id;
+
+                    thumbnail.IsUsed = true;
+                    _unitOfWork.DbContext.Update(thumbnail);
+                }
+
                 _unitOfWork.DbContext.Add(newPost);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -78,6 +88,7 @@ namespace NEWS.Services.Services
             catch (Exception e)
             {
                 await _unitOfWork.RollBack();
+                // Delete thumbnail on File explore
                 throw;
             }
 
@@ -105,12 +116,14 @@ namespace NEWS.Services.Services
         {
             var vietNamPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.VietNam))
+                .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(3)
                 .ToListAsync();
             var globalPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.Global))
+                .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(3)
@@ -118,6 +131,7 @@ namespace NEWS.Services.Services
             
             var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;
             var topPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
+                .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(8)
@@ -134,7 +148,8 @@ namespace NEWS.Services.Services
         public async Task<PostDto> GetBySlug(string slug)
         {
             slug = slug.ToLower();
-            var post = await _repository.GetAll(_ => _.Slug == slug)
+            var post = await _repository.GetAll(_ => _.Slug == slug && _.Status == (int)PostStatus.Active)
+                .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, ScrollToTop } from '../components';
 import { appFetch } from '../shared/utils/apiUtils';
-import { TEST_IMAGE_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, TEST_IMAGE_URL } from '../shared/constants/app-const';
 import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
@@ -52,9 +52,9 @@ function Article({ news }) {
           </article>
 
           <article className={styles.media_wrapper}>
-            {news.thumbnail ? (
+            {news.thumbnailFileName ? (
               <Image
-                src={TEST_IMAGE_URL}
+                src={`${BASE_THUMBNAIL_URL}/${news.thumbnailFileName}`}
                 alt='Article media'
                 width={500}
                 height={300}

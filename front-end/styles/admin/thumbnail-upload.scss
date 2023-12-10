@@ -1,0 +1,39 @@
+.app-thumbnail-upload {
+  .drag-zone {
+    width: 70px;
+    height: 70px;
+    border: 1px #ddd dashed;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    cursor: pointer;
+
+    svg {
+      font-size: 34px;
+      color: #ddd;
+      margin: auto;
+    }
+  }
+
+  .image-item {
+    position: relative;
+    width: 100px;
+    .img-preview {
+      cursor: pointer;
+      width: 100%;
+    }
+  
+    .btn-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      cursor: pointer;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  
+}

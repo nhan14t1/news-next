@@ -40,7 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\images\thumbnails\" />
+    <Folder Include="wwwroot\images\posts\" />
   </ItemGroup>
 
 </Project>

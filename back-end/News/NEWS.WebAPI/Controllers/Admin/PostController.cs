@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
+using NEWS.WebAPI.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,19 +14,26 @@ namespace NEWS.WebAPI.Controllers.Admin
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
-        private readonly IUserService _userService;
+        private readonly IFileService _fileService;
+        private readonly IFileManagementService _fileManagementService;
+
         public PostController(IPostService postService,
-            IUserService userService)
+            IFileService fileService,
+            IFileManagementService fileManagementService)
         {
             _postService = postService;
-            _userService = userService;
+            _fileService = fileService;
+            _fileManagementService = fileManagementService;
         }
 
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] PostVM request)
         {
             var email = User.Identity.Name;
-            var post = await _postService.AddAsync(request, email);
+
+            var fileInfo = await _fileService.UploadThumbnailBase64Async(request.Thumbnail);
+            var fileThumbnail = fileInfo != null ? await _fileManagementService.AddThumbnail(fileInfo.Name, fileInfo.Extension) : null;
+            var post = await _postService.AddAsync(request, email, fileThumbnail);
             return Ok(post);
         }
 

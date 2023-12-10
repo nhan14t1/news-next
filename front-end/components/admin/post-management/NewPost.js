@@ -7,6 +7,7 @@ import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { post } from '../../../shared/utils/apiUtils';
 import { useRouter } from 'next/router';
 import HtmlEditor from '../../shared/HtmlEditor';
+import ThumbnailUpload from './components/ThumbnailUpload';
 
 const NewPost = props => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const NewPost = props => {
 
     post('/admin/post', {...postObj, imageUrls})
       .then(res => {
-        router.push('/admin/post-management');
+        // router.push('/admin/post-management');
       })
   }
 
@@ -100,6 +101,11 @@ const NewPost = props => {
         <Input key='label' className='w-100' placeholder='Chưa có chức năng nhãn'></Input>
       </div>
 
+      <div className='mt-3'><b>Thumbnail:</b></div>
+      <div className='mt-2'>
+        <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({...postObj, thumbnail})}/> 
+      </div>
+      
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
         <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })}/>

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using NEWS.Services.AutoMappings;
 using NEWS.WebAPI.Extensions;
 using NEWS.WebAPI.JwtUtils;
+using NEWS.WebAPI.Middlewares;
 using NEWS.WebAPI.Services;
 using System.Text;
 using System.Text.Json;
@@ -80,6 +81,8 @@ services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors("AllowAll");
 
