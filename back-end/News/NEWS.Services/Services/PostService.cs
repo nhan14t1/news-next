@@ -119,14 +119,14 @@ namespace NEWS.Services.Services
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
-                .Take(3)
+                .Take(6)
                 .ToListAsync();
             var globalPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.Global))
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
-                .Take(3)
+                .Take(6)
                 .ToListAsync();
             
             var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;

@@ -111,7 +111,7 @@ const NewPost = props => {
         <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })}/>
       </div>
 
-      <div className='mt-5 d-flex'>
+      <div className='mt-5 pt-3 d-flex'>
         <div className='ms-auto'>
           <Button key='btn-draft' type='default'>Lưu nháp</Button>
           <Button key='btn-publish' className='ms-2' type='primary'

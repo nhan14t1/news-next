@@ -51,7 +51,7 @@
         font-style: normal;
         height: 135px;
 
-        .webTitle {
+        .title {
             margin: 0;
             padding: 10px 0px;
 
@@ -91,7 +91,7 @@
         transition: all 0.2s ease;
 
         div:first-child {
-            text-decoration: underline;
+            // text-decoration: underline;
         }
     }
 }

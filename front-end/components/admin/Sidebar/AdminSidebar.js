@@ -40,6 +40,12 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar }) => {
           ></i>
         </div>
 
+        <div className='home-link'>
+          <Link href={'/'}>
+            Trang chủ
+          </Link>
+        </div>
+
         <div className="sidebar__menu">
           <div className="sidebar__link active_menu_link">
             <i className="fa fa-minus-square"></i>

@@ -1,18 +1,14 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import {
   Loader,
   Card,
   TinyCard,
-  Button,
   ScrollToTop,
-  Select,
 } from '../components';
 import styles from '../styles/Home.module.scss';
 import useComboFetch from '../components/Hooks/useComboFetch';
-import { BASE_THUMBNAIL_URL, CATEGORIES, TEST_IMAGE_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, CATEGORIES, TEST_IMAGE_URL, WEB_NAME } from '../shared/constants/app-const';
 
 function Home() {
   const { loading, error, vietNamPosts, globalPosts, videoPosts, topPosts } =
@@ -145,7 +141,7 @@ function Home() {
   return (
     <div className='container'>
       <Head>
-        <title>KaiOS | News</title>
+        <title>{`${WEB_NAME} - Trang chủ`}</title>
       </Head>
 
       {getContent()}

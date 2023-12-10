@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, ScrollToTop } from '../components';
 import { appFetch } from '../shared/utils/apiUtils';
-import { BASE_THUMBNAIL_URL, TEST_IMAGE_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, WEB_NAME } from '../shared/constants/app-const';
 import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
@@ -32,13 +32,13 @@ function Article({ news }) {
   return (
     <div className='container'>
       <Head>
-        <title>KaiOS | Article</title>
+        <title>{`${news.title} - ${WEB_NAME}`}</title>
       </Head>
 
       <main>
         <article className={styles.wrapper}>
           <article className={styles.content_wrapper}>
-            <Button onClick={handleClick}>{buttonText}</Button>
+            {/* <Button onClick={handleClick}>{buttonText}</Button> */}
             <p className={styles.date}>
               {iconCalendar} {moment(news.createdDate).format('DD/MM/YYYY')}
             </p>

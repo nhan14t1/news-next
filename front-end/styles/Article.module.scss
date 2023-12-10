@@ -9,7 +9,6 @@
         width: 57%;
         max-width: 650px;
         padding-right: 15px;
-        padding-top: 20px;
     }
 
     .media_wrapper {
@@ -44,11 +43,12 @@
     }
 
     .figcaption {
-        font-size: 12px;
+        font-size: 14px;
         line-height: 14px;
         letter-spacing: 0.3px;
         mix-blend-mode: normal;
         opacity: 0.5;
+        margin-top: 8px;
     }
 
     .overlay {
