@@ -6,20 +6,20 @@ import { SearchBar } from '../index';
 function Header(props) {
   return (
     <header className={styles.header}>
-      <div className={styles.container}>
+      <div className={`${styles.container} container`}>
         <div className={styles.logo}>
           <Link href='/' onClick={props.onClick}>
             <Image
               src='/assets/KaiOS-Logo.svg'
               alt='KaiOS Logo'
               width={142}
-              height={56}
+              height={25}
             />
           </Link>
         </div>
-        <div className={styles.search}>
+        {/* <div className={styles.search}>
           <SearchBar {...props} />
-        </div>
+        </div> */}
       </div>
     </header>
   );

@@ -11,11 +11,12 @@ $primary-color: #6f02b5;
         display: flex;
         margin: 0 auto;
         position: relative;
-        padding-top: 10px;
-        padding-left: 15px;
-        padding-right: 15px;
-        max-width: 1140px;
+        padding: 5px 0;
+        // padding-left: 15px;
+        // padding-right: 15px;
+        // max-width: 1140px;
         justify-content: space-between;
+        height: 40px;
 
         .logo {
             cursor: pointer;
