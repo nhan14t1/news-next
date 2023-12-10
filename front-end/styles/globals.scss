@@ -2,19 +2,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap");
 
 // Font Variables
-$font-stack: "Inter", BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
-    Helvetica Neue, sans-serif;
+$font-stack: Arial,Helvetica,sans-serif;
 
 html,
 body {
     padding: 0;
     margin: 0;
-    font-family: -apple-system, $font-stack;
+    font-family: $font-stack;
+    font-size: 16px;
 }
 
-h1,
-h2,
-h4 {
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     font-style: normal;
     font-weight: bold;
     letter-spacing: 0.07px;
