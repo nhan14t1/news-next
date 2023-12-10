@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   publicRuntimeConfig: {
     // Will be available on both server and client
     GUARDIAN_API_KEY: process.env.GUARDIAN_API_KEY,
@@ -9,3 +9,5 @@ module.exports = {
     domains: ['media.guim.co.uk', 'localhost'],
   },
 };
+
+module.exports = config;

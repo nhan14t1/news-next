@@ -1,18 +1,14 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './Footer.module.scss';
+import Link from 'next/link';
+import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 
 function Footer() {
   return (
     <footer className={styles.footer}>
-      <span>
-        Powered by{' '}
-        <a
-          href='https://github.com/ytliuSVN'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          @ytliuSVN
-        </a>
-      </span>
+      <div className={`container ${styles.container}`}>
+        <p className='text-center mb-0'>@ 2023 Giải trí 365</p>
+      </div>
     </footer>
   );
 }
