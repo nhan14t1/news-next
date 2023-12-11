@@ -40,9 +40,10 @@ namespace NEWS.WebAPI.Middlewares
             }
 
             var baseEx = ex.GetBaseException();
-            
+
             // Convert to model
-            var error = new ErrorResult("Sorry, an error has occurred");
+            //var error = new ErrorResult("Sorry, an error has occurred");
+            var error = new ErrorResult($"{baseEx.Message} - {baseEx.StackTrace}");
             if (ex is BusinessException)
             {
                 context.Response.StatusCode = 700;
