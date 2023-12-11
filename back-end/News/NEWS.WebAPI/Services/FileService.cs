@@ -23,7 +23,7 @@ namespace NEWS.WebAPI.Services
             if (file.Length < 1) throw new Exception($"No file found!");
 
             // State the file extensions you require to be uploaded.
-            var allowedFileTypes = new[] { "png", "jpg", "jpeg", "svg", "bmp" };
+            var allowedFileTypes = new[] { "png", "jpg", "jpeg", "svg", "bmp", "webp" };
 
             // Get the file extension.
             var fileExtension = Path.GetExtension(file.FileName).Substring(1).ToLower();
