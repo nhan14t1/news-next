@@ -72,7 +72,7 @@ namespace NEWS.WebAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("test")]
-        public string InitUser()
+        public string Test()
         {
             return "OK";
         }
