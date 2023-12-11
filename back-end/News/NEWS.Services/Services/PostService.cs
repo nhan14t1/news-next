@@ -141,8 +141,6 @@ namespace NEWS.Services.Services
                 .Take(8)
                 .ToListAsync();
 
-            throw new BusinessException("Test");
-
             return new HomePageResult
             {
                 VietNamPosts = _mapper.Map<List<PostDto>>(vietNamPosts),
