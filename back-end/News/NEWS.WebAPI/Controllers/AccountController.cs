@@ -70,6 +70,13 @@ namespace NEWS.WebAPI.Controllers
             return "OK";
         }
 
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public string InitUser()
+        {
+            return "OK";
+        }
+
         [HttpPost("logout")]
         [Authorize]
         public ActionResult Logout()
