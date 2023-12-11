@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NEWS.Entities.Constants;
 using NEWS.Entities.Extensions;
 using NEWS.Entities.Models.Dto;
@@ -9,7 +10,7 @@ using NEWS.Entities.MySqlEntities;
 using NEWS.Entities.Repositories;
 using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
-using static System.Net.Mime.MediaTypeNames;
+using NEWS.Entities.Exceptions;
 
 namespace NEWS.Services.Services
 {
@@ -18,16 +19,19 @@ namespace NEWS.Services.Services
         private IUserRepository _userRepository;
         private IFileManagementRepository _fileManagementRepository;
         private IMapper _mapper;
+        private ILogger<PostService> _logger;
 
         public PostService(IUnitOfWork unitOfWork,
             IUserRepository userRepository,
             IFileManagementRepository fileManagementRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<PostService> logger)
             : base(unitOfWork)
         {
             _userRepository = userRepository;
             _fileManagementRepository = fileManagementRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<Post> AddAsync(PostVM request, string email, FileManagement thumbnail)
@@ -136,6 +140,8 @@ namespace NEWS.Services.Services
                 .OrderByDescending(_ => _.Id)
                 .Take(8)
                 .ToListAsync();
+
+            throw new BusinessException("Test");
 
             return new HomePageResult
             {

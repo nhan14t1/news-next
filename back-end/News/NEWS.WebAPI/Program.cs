@@ -8,6 +8,7 @@ using NEWS.WebAPI.Extensions;
 using NEWS.WebAPI.JwtUtils;
 using NEWS.WebAPI.Middlewares;
 using NEWS.WebAPI.Services;
+using Serilog;
 using System.Text;
 using System.Text.Json;
 
@@ -18,8 +19,20 @@ var configuration = builder.Configuration
  .SetBasePath(Directory.GetCurrentDirectory())
  .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
  .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
+ .AddJsonFile($"serilog.json", optional: true, reloadOnChange: true)
  .AddEnvironmentVariables()
  .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)    // set default minimum level
+    .MinimumLevel.Debug()
+    .CreateLogger();
+
+builder.Host.UseSerilog((hostContext, loggerConfig) =>
+{
+    loggerConfig.ReadFrom.Configuration(hostContext.Configuration)
+        .Enrich.WithProperty("ApplicationName", hostContext.HostingEnvironment.ApplicationName);
+});
 
 // Add services to the container.
 var services = builder.Services;
@@ -35,6 +48,7 @@ services.AddSingleton<IMapper>(op=> config.CreateMapper());
 
 var jwtTokenConfig = configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
 services.AddSingleton(jwtTokenConfig);
+
 services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,6 +90,13 @@ services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+});
+
+
+services.AddLogging(loggingBuilder =>
+{
+    // Add Serilog
+    loggingBuilder.AddSerilog();
 });
 
 var app = builder.Build();

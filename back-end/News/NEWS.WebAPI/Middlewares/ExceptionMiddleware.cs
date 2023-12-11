@@ -1,5 +1,9 @@
 ﻿using NEWS.Entities.Constants;
+using NEWS.Entities.Exceptions;
+using NEWS.Entities.Models.Responses;
+using NEWS.Entities.Utils;
 using System.Net;
+using System.Text.Json;
 
 namespace NEWS.WebAPI.Middlewares
 {
@@ -7,6 +11,9 @@ namespace NEWS.WebAPI.Middlewares
     {
         private readonly RequestDelegate _next;
         //private readonly ILogger<ExceptionMiddleware> _logger;
+        private static ILoggerFactory loggerFactory = new LoggerFactory();
+
+        private static ILogger _logger = loggerFactory.CreateLogger(nameof(ExceptionMiddleware));
 
         public ExceptionMiddleware(RequestDelegate next)
         {
@@ -21,46 +28,41 @@ namespace NEWS.WebAPI.Middlewares
             }
             catch (Exception ex)
             {
-                var a = 0;
-                //_logger.LogInformation(AppSettings.ConnectionString);
-                //_logger.LogError(ex, ex.Message);
-
-                //await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext, ex);
             }
         }
 
-        //private async Task HandleExceptionAsync(HttpContext context, Exception ex)
-        //{
-        //    context.Response.ContentType = "application/json";
-        //    if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
-        //    {
-        //        return;
-        //    }
-        //    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+            {
+                // Handle unauth
+            }
 
-        //    var baseEx = ex.GetBaseException();
-        //    if (!(ex is AppException))
-        //    {
-        //        return;
-        //    }
-        //    //
-        //    // Convert to model
-        //    var error = new ErrorModel("Sorry, an error has occurred");
-        //    if (ex is AppException)
-        //    {
-        //        error.Message = baseEx.Message;
-        //        //error.Code = (ex as AppException).ErrorCode;
-        //    }
+            var baseEx = ex.GetBaseException();
+            
+            // Convert to model
+            var error = new ErrorResult("Sorry, an error has occurred");
+            if (ex is BusinessException)
+            {
+                context.Response.StatusCode = 700;
+                error.StatusCode = 700;
+                error.Message = baseEx.Message;
+                _logger.LogInformation(baseEx, baseEx.Message);
+            }
+            else
+            {
+                _logger.LogError(baseEx, baseEx.Message);
+            }
 
-        //    _logger.LogError(baseEx, baseEx.Message);
-        //    //
-        //    // Return as json
-        //    context.Response.ContentType = "application/json";
-        //    using (var writer = new StreamWriter(context.Response.Body))
-        //    {
-        //        new CamelCaseJsonSerializer().Serialize(writer, error);
-        //        await writer.FlushAsync().ConfigureAwait(false);
-        //    }
-        //}
+            //
+            // Return as json
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsync
+            (
+                JsonSerializer.Serialize(error, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            );
+        }
     }
 }
