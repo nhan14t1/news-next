@@ -12,10 +12,12 @@ const AdminLogin = () => {
   const router = useRouter();
 
   const onLogin = () => {
-    post('/Account/Login', { userName, password })
+    post('/Account/Login', { userName, password }, false)
       .then(res => {
-        saveInfo(res.data);
-        router.push('/admin/post-management');
+        if (res && res.data) {
+          saveInfo(res.data);
+          router.push('/admin/post-management');
+        }
       })
   }
 
@@ -31,7 +33,8 @@ const AdminLogin = () => {
         <div className="form">
           <div className="login-form">
             <input type="text" placeholder="username" value={userName} onChange={(e) => setUserName(e.target.value)} />
-            <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={e => e.keyCode == 13 && onLogin()} />
             <button type='button' onClick={() => onLogin()}>login</button>
             {/* <p className="message">Not registered? <a href="/register">Create an account</a></p> */}
           </div>

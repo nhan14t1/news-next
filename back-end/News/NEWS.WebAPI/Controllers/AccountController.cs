@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NEWS.Entities.Exceptions;
 using NEWS.Entities.Models.Responses;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
@@ -35,7 +36,7 @@ namespace NEWS.WebAPI.Controllers
 
             if (!await _userService.ValidateUserAsync(request.UserName, request.Password))
             {
-                return Unauthorized();
+                throw new BusinessException("Sai tên đăng nhập hoặc mật khẩu");
             }
 
             var user = await _userService.GetByEmailAsync(request.UserName);

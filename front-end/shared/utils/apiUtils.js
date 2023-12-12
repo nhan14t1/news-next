@@ -83,16 +83,16 @@ const handleError = (error, isCatchError = true) => {
   if (res.status === 401) {
     // Clear cache
     // Remove old access token if have
-    if (removeStoreLoggedUser) {
-      removeStoreLoggedUser();
-    }
+    // if (removeStoreLoggedUser) {
+    //   removeStoreLoggedUser();
+    // }
 
-    warningAlert('Your token has expired');
-    setTimeout(() => {
-      // Navigate to login page
-      window.location.href = window.location.origin + '/login';
-    }, 2000);
-    return;
+    // warningAlert('Your token has expired');
+    // setTimeout(() => {
+    //   // Navigate to login page
+    //   window.location.href = window.location.origin + '/admin/login';
+    // }, 2000);
+    // return;
   }
 
   if (res.status === 403) {
