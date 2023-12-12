@@ -171,7 +171,7 @@ namespace NEWS.Services.Services
 
         public async Task<List<PostDto>> GetAllAsync()
         {
-            var rs = await _repository.GetAll(_ => true)
+            var rs = await _repository.GetAll(_ => !_.IsDeleted)
                 .Include(_ => _.User)
                 .Include(_ => _.PostCategories)
                 .ThenInclude(_ => _.Category)
@@ -183,14 +183,14 @@ namespace NEWS.Services.Services
 
         public async Task<HomePageResult> GetHomePageData()
         {
-            var vietNamPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
+            var vietNamPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.VietNam))
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
                 .Take(6)
                 .ToListAsync();
-            var globalPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active
+            var globalPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active
                 && _.PostCategories.Any(x => x.CategoryId == (int)AppCategory.Global))
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
@@ -199,7 +199,7 @@ namespace NEWS.Services.Services
                 .ToListAsync();
 
             var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;
-            var topPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
+            var topPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Id)
@@ -217,10 +217,15 @@ namespace NEWS.Services.Services
         public async Task<PostDto> GetBySlugAsync(string slug)
         {
             slug = slug.ToLower();
-            var post = await _repository.GetAll(_ => _.Slug == slug && _.Status == (int)PostStatus.Active)
+            var post = await _repository.GetAll(_ => _.Slug == slug && _.Status == (int)PostStatus.Active && !_.IsDeleted)
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new BusinessException("Bài viết không tồn tại");
+            }
 
             return _mapper.Map<PostDto>(post);
         }
@@ -233,7 +238,26 @@ namespace NEWS.Services.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
+            if (post == null)
+            {
+                throw new BusinessException("Bài viết không tồn tại");
+            }
+
             return _mapper.Map<PostDto>(post);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var post = await _repository.GetAll(_ => _.Id == id && !_.IsDeleted).FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new BusinessException("Bài viết không tồn tại");
+            }
+
+            post.IsDeleted = true;
+            post.UpdatedDate = DateTime.Now.ToTimeStamp();
+            await _repository.UpdateAsync(post);
         }
     }
 }

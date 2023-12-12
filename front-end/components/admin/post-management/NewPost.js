@@ -1,4 +1,4 @@
-import { Button, Input, Select } from 'antd';
+import { Button, Empty, Input, Select } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { CATEGORIES, IMAGE_POST_PREFIX } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
@@ -14,6 +14,7 @@ import { useSearchParams } from 'next/navigation';
 const NewPost = props => {
   const router = useRouter();
   const [postObj, setPostObj] = useState({});
+  const [isError, setIsError] = useState(false);
   const { setLoading } = useContext(AppContext); 
 
   const categoryOptions = Object.values(CATEGORIES).map(_ => ({ value: _.id, label: _.name }));
@@ -35,6 +36,8 @@ const NewPost = props => {
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
           setPostObj(postObj);
         }
+      }).catch(res => {
+        setIsError(true);
       }).finally(() => setLoading(false));
   }
 
@@ -87,6 +90,10 @@ const NewPost = props => {
 
   const validateCreation = () => {
     return true;
+  }
+
+  if (isError) {
+    return <Empty description="Không có dữ liệu" className='pt-5'></Empty>
   }
 
   return <div className='new-post'>

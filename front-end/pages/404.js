@@ -3,23 +3,23 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 function NotFound() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    setTimeout(() => {
-      router.back();
-      // router.push('/');
-    }, 3000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     router.back();
+  //     // router.push('/');
+  //   }, 3000);
+  // }, []);
 
   return (
     <div className='not-found container'>
-      <h2>Page Not Found</h2>
-      <h4>We could not find what you were looking for.</h4>
+      <h2>Trang không tồn tại</h2>
+      <h4>Chúng tôi không tìm thấy trang mà bạn muốn truy cập</h4>
       <p>
-        Go back to the{' '}
+        Quay lại{' '}
         <Link href='/'>
-          Home page
+          Trang chủ
         </Link>
       </p>
     </div>

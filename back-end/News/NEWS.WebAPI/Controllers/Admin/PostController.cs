@@ -62,8 +62,10 @@ namespace NEWS.WebAPI.Controllers.Admin
 
         // DELETE api/<PostController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
+            await _postService.DeleteAsync(id);
+            return Ok(true);
         }
     }
 }

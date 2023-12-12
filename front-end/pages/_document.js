@@ -8,10 +8,10 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang='en'>
+      <Html lang='vi'>
         <Head>
           <link rel='icon' href='/favicon.png' />
-          <meta name='description' content='NextJS News App' />
+          <meta name='description' content='Showbiz 365' />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         </Head>
         <body>

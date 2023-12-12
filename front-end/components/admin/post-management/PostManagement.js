@@ -1,12 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Table } from "antd";
+import { Button, Card, Result, Table } from "antd";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../../../shared/contexts/AppContext";
-import { get } from "../../../shared/utils/apiUtils";
+import { deleteAPI, get } from "../../../shared/utils/apiUtils";
 import { CATEGORIES, POST_STATUS } from "../../../shared/constants/app-const";
 import * as moment from 'moment'
+import { deleteConfirm, successAlert } from "../../../shared/utils/alertUtils";
 
 const PostManagement = () => {
   const [data, setData] = useState([]);
@@ -78,7 +79,8 @@ const PostManagement = () => {
           <Link key={`lnkUpdate${item.id}`} href={`/admin/post-management/new-post?id=${item.id}`}>
             <Button key={`btnUpdate${item.id}`} type="primary">Sửa</Button> &nbsp;
           </Link>
-          <Button key={`btnDelete${item.id}`} type="primary" danger>Xóa</Button>
+          <Button key={`btnDelete${item.id}`} type="primary" danger className="mt-1"
+            onClick={() => onDeleteClicked(item.id)}>Xóa</Button>
         </>
       }
     },
@@ -95,6 +97,29 @@ const PostManagement = () => {
       .then(res => {
         if (res && res.data) {
           setData(res.data);
+        }
+      }).finally(() => setLoading(false));
+  }
+
+  const onDeleteClicked = (id) => {
+    deleteConfirm('Xóa bài viết', 'Bạn có chắc?', result => {
+      result && onDeletePost(id);
+    });
+  }
+
+  const onDeletePost = (id) => {
+    setLoading(true);
+
+    deleteAPI(`/admin/post/${id}`, false)
+      .then(res => {
+        if (res && res.data) {
+          const index = data.findIndex(_ => _.id == id);
+          if (index > -1) {
+            data.splice(index, 1);
+            setData([...data]);
+          }
+
+          successAlert('Xóa thành công');
         }
       }).finally(() => setLoading(false));
   }

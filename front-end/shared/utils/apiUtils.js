@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { BASE_API_URL } from '../constants/app-const';
 import * as STORAGE_KEY from '../constants/storage-key-const';
+import { errorAlert, successAlert, warningAlert } from './alertUtils';
 
 const getOptions = () => {
   return {
@@ -41,52 +42,52 @@ export const appFetch = async (url) => {
 export const get = (url, isCatchError = true) => {
   return axios.get(BASE_API_URL + url, getOptions())
     .catch((res) => {
-      handleError(res.response, isCatchError);
-      return res;
+      handleError(res, isCatchError);
     });
 }
 
 export const post = (url, data, isCatchError = true) => {
   return axios.post(BASE_API_URL + url, data, getOptions())
     .catch((res) => {
-      handleError(res.response, isCatchError);
-      return res;
+      handleError(res, isCatchError);
     });;
 }
 
 export const postFile = (url, data, isCatchError = true) => {
   return axios.post(BASE_API_URL + url, data, getFileOptions())
     .catch((res) => {
-      handleError(res.response, isCatchError);
-      return res;
+      handleError(res, isCatchError);
     });;
 }
 
 export const put = (url, data, isCatchError = true) => {
   return axios.put(BASE_API_URL + url, data, getOptions())
     .catch((res) => {
-      handleError(res.response, isCatchError);
-      return res;
+      handleError(res, isCatchError);
     });;
 }
 
 export const deleteAPI = (url, isCatchError = true) => {
-  return axios.get(BASE_API_URL + url, getOptions())
+  return axios.delete(BASE_API_URL + url, getOptions())
     .catch((res) => {
-      handleError(res.response, isCatchError);
-      return res;
+      handleError(res, isCatchError);
     });
 }
 
-const handleError = (res, isCatchError = true) => {
-  if (res && res.status === 401) {
+const handleError = (error, isCatchError = true) => {
+  if (!error || !error.response) {
+    return;
+  }
+  const res = error.response;
+
+  if (res.status === 401) {
     // Clear cache
     // Remove old access token if have
     if (removeStoreLoggedUser) {
       removeStoreLoggedUser();
     }
 
-    // warningAlert('Your token has expired', 2500);
+    warningAlert('Your token has expired');
     setTimeout(() => {
       // Navigate to login page
       window.location.href = window.location.origin + '/login';
@@ -94,7 +95,7 @@ const handleError = (res, isCatchError = true) => {
     return;
   }
 
-  if (res && res.status === 403) {
+  if (res.status === 403) {
     //
     // Navigate to forbidden page
     window.location.href = window.location.origin + '/forbidden';
@@ -103,10 +104,9 @@ const handleError = (res, isCatchError = true) => {
   let messageError = res && res.data && res.data.message
     ? res.data.message : 'Sorry, an error has occurred';
 
+  errorAlert(messageError);
   if (isCatchError) {
-    // errorAlert(messageError);
-  } else {
-    throw new Error(messageError);
+    throw error;
   }
 }
 

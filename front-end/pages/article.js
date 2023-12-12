@@ -76,16 +76,16 @@ function Article({ news }) {
   );
 }
 
-Article.getInitialProps = async ({ query }) => {
+export async function getServerSideProps({query}) {
   const { id } = query;
   const data = await appFetch(`/post/${id}`);
-  if (!data) {
+  if (!data || data.isError) {
     return {
       notFound: true,
     };
   }
 
-  return { news: data };
-};
+  return { props: { news: data } };
+}
 
 export default Article;
