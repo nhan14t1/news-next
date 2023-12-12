@@ -93,7 +93,7 @@ const PostManagement = () => {
 
   const getData = () => {
     setLoading(true);
-    get('/admin/post')
+    get('/admin/post', false)
       .then(res => {
         if (res && res.data) {
           setData(res.data);

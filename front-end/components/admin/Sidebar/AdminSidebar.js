@@ -18,7 +18,6 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar }) => {
   useEffect(() => {
     if (!isSSR && !isAdmin()) {
       router.push('/admin/login');
-      return <></>;
     }
   }, [isSSR]);
 
