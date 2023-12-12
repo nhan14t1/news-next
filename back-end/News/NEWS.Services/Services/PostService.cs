@@ -99,9 +99,74 @@ namespace NEWS.Services.Services
             newPost.PostCategories = postCategories.Select(_ => new PostCategory {
                 Id = _.Id,
                 PostId = _.PostId,
-                CategoryId= _.CategoryId
+                CategoryId = _.CategoryId
             }).ToList();
             return newPost;
+        }
+
+        public async Task<PostDto> UpdateAsync(PostVM request)
+        {
+            var post = await _repository.GetAll(_ => _.Id == request.Id && !_.IsDeleted)
+                .Include(_ => _.PostCategories)
+                .FirstOrDefaultAsync();
+
+            post.Title = request.Title;
+            post.Slug = request.Slug;
+            post.IntroText = request.IntroText;
+            post.Content = request.Content;
+            post.UpdatedDate = DateTime.Now.ToTimeStamp();
+
+            var newCategories = request.CategoryIds != null
+                    ? request.CategoryIds.Select(categoryId => new PostCategory
+                    {
+                        CategoryId = categoryId,
+                        PostId = post.Id
+                    }).ToList() : new List<PostCategory>();
+
+            var oldCategories = post.PostCategories;
+
+            var categoriesToAdd = newCategories.Where(_ => !oldCategories.Any(x => x.CategoryId == _.CategoryId)).ToList();
+            var categoriesToDelete = oldCategories.Where(_ => !newCategories.Any(x => x.CategoryId == _.CategoryId)).ToList();
+
+            // Flag image to use. The image isn't used will be removed by the job
+            var images = request.ImageUrls != null
+                ? await _fileManagementRepository.GetAll(_ => !_.IsUsed && request.ImageUrls.Contains(_.Name)).ToListAsync()
+            : new List<FileManagement>();
+
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+
+                _unitOfWork.DbContext.Update(post);
+
+                if (categoriesToAdd.Any())
+                {
+                    _unitOfWork.DbContext.AddRange(categoriesToAdd);
+                }
+
+                if (categoriesToDelete.Any())
+                {
+                    _unitOfWork.DbContext.RemoveRange(categoriesToAdd);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                foreach (var image in images)
+                {
+                    image.IsUsed = true;
+                    _unitOfWork.DbContext.Update(image);
+                }
+
+                await _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                await _unitOfWork.RollBack();
+                // Delete thumbnail on File explore
+                throw;
+            }
+
+            return _mapper.Map<PostDto>(post);
         }
 
         public async Task<List<PostDto>> GetAllAsync()
@@ -132,7 +197,7 @@ namespace NEWS.Services.Services
                 .OrderByDescending(_ => _.Id)
                 .Take(6)
                 .ToListAsync();
-            
+
             var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;
             var topPosts = await _repository.GetAll(_ => _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
                 .Include(_ => _.Thumbnail)
@@ -149,11 +214,22 @@ namespace NEWS.Services.Services
             };
         }
 
-        public async Task<PostDto> GetBySlug(string slug)
+        public async Task<PostDto> GetBySlugAsync(string slug)
         {
             slug = slug.ToLower();
             var post = await _repository.GetAll(_ => _.Slug == slug && _.Status == (int)PostStatus.Active)
                 .Include(_ => _.Thumbnail)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<PostDto>(post);
+        }
+
+        public async Task<PostDto> GetByIdAsync(int id)
+        {
+            var post = await _repository.GetAll(_ => _.Id == id && !_.IsDeleted)
+                .Include(_ => _.Thumbnail)
+                .Include(_ => _.PostCategories).ThenInclude(_ => _.Category)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 

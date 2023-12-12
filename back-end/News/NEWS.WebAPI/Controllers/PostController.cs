@@ -25,7 +25,7 @@ namespace NEWS.WebAPI.Controllers
         [HttpGet("{slug}")]
         public async Task<ActionResult> GetBySlug(string slug)
         {
-            var data = await _postService.GetBySlug(slug);
+            var data = await _postService.GetBySlugAsync(slug);
             return Ok(data);
         }
     }

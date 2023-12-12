@@ -10,20 +10,6 @@ import * as moment from 'moment'
 
 const PostManagement = () => {
   const [data, setData] = useState([]);
-  const dataSource = [
-    {
-      id: '1',
-      author: 'Mike',
-      views: 32,
-      title: '10 Downing Street',
-    },
-    {
-      id: '2',
-      author: 'John',
-      views: 42,
-      title: '10 Downing Street 2',
-    },
-  ];
 
   const columns = [
     {
@@ -89,7 +75,9 @@ const PostManagement = () => {
       key: 'actions',
       render: (_, item) => {
         return <>
-          <Button key={`btnUpdate${item.id}`} type="primary">Sửa</Button> &nbsp;
+          <Link key={`lnkUpdate${item.id}`} href={`/admin/post-management/new-post?id=${item.id}`}>
+            <Button key={`btnUpdate${item.id}`} type="primary">Sửa</Button> &nbsp;
+          </Link>
           <Button key={`btnDelete${item.id}`} type="primary" danger>Xóa</Button>
         </>
       }
@@ -124,7 +112,7 @@ const PostManagement = () => {
         </Link>
       </div>
 
-      <Table dataSource={data} columns={columns} className="mt-2" />;
+      <Table dataSource={data} columns={columns} className="mt-2" />
     </Card>
   </>;
 }

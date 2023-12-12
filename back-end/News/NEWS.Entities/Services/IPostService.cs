@@ -13,6 +13,10 @@ namespace NEWS.Entities.Services
 
         Task<HomePageResult> GetHomePageData();
 
-        Task<PostDto> GetBySlug(string slug);
+        Task<PostDto> GetBySlugAsync(string slug);
+     
+        Task<PostDto> GetByIdAsync(int id);
+
+        Task<PostDto> UpdateAsync(PostVM request);
     }
 }

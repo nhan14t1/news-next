@@ -46,15 +46,18 @@ namespace NEWS.WebAPI.Controllers.Admin
 
         // GET api/<PostController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult> GetAsync(int id)
         {
-            return "value";
+            var data = await _postService.GetByIdAsync(id);
+            return Ok(data);
         }
 
         // PUT api/<PostController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public async Task<ActionResult> UpdateAsync([FromBody] PostVM request)
         {
+            var post = await _postService.UpdateAsync(request);
+            return Ok(post);
         }
 
         // DELETE api/<PostController>/5

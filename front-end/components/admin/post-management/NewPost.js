@@ -1,19 +1,42 @@
 import { Button, Input, Select } from 'antd';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CATEGORIES, IMAGE_POST_PREFIX } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
-import { post } from '../../../shared/utils/apiUtils';
+import { get, post, put } from '../../../shared/utils/apiUtils';
 import { useRouter } from 'next/router';
 import HtmlEditor from '../../shared/HtmlEditor';
 import ThumbnailUpload from './components/ThumbnailUpload';
+import AppContext from '../../../shared/contexts/AppContext';
+import { useSearchParams } from 'next/navigation';
 
 const NewPost = props => {
   const router = useRouter();
   const [postObj, setPostObj] = useState({});
+  const { setLoading } = useContext(AppContext); 
 
   const categoryOptions = Object.values(CATEGORIES).map(_ => ({ value: _.id, label: _.name }));
+
+  const isEdit = () => postObj && postObj.id;
+  const params = useSearchParams()
+  
+  useEffect(() => {
+    const id = params.get('id');
+    id && getData(id);
+  }, []);
+
+  const getData = (id) => {
+    setLoading(true)
+    get(`/admin/post/${id}`)
+      .then(res => {
+        if (res && res.data) {
+          const postObj = res.data;
+          postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
+          setPostObj(postObj);
+        }
+      }).finally(() => setLoading(false));
+  }
 
   const onTitleBlur = () => {
     if (!postObj.slug && postObj.title && postObj.title.trim()) {
@@ -28,10 +51,29 @@ const NewPost = props => {
 
     var imageUrls = processImageUrls();
 
+    setLoading(true);
     post('/admin/post', {...postObj, imageUrls})
       .then(res => {
-        // router.push('/admin/post-management');
-      })
+        router.push('/admin/post-management');
+      }).finally(() => {
+        setLoading(false);
+      });
+  }
+
+  const onUpdate = () => {
+    if (!validateCreation()) {
+      return;
+    }
+
+    var imageUrls = processImageUrls();
+
+    setLoading(true);
+    put('/admin/post', {...postObj, imageUrls})
+      .then(res => {
+        router.push('/admin/post-management');
+      }).finally(() => {
+        setLoading(false);
+      });
   }
 
   // In case we insert an image, then we delete the image on UI => Need to remove this image to save server storage.
@@ -90,7 +132,7 @@ const NewPost = props => {
             width: '100%',
           }}
           placeholder="Chọn 1 hoặc nhiều category"
-          values={postObj.categoryIds || []}
+          value={postObj.categoryIds || []}
           onChange={(e) => setPostObj({ ...postObj, categoryIds: e })}
           options={categoryOptions}
         />
@@ -115,7 +157,7 @@ const NewPost = props => {
         <div className='ms-auto'>
           <Button key='btn-draft' type='default'>Lưu nháp</Button>
           <Button key='btn-publish' className='ms-2' type='primary'
-            onClick={() => onCreate()}>Xuất bản</Button>
+            onClick={() => isEdit() ? onUpdate() : onCreate()}>Xuất bản</Button>
           <Button key='btn-schedule' className='ms-2' type='primary' ghost onClick={() => alert('Chức năng này chưa có')}>Lên lịch</Button>
         </div>
       </div>
