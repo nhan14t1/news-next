@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "sm": "next dev",
     "dev": "SET NODE_OPTIONS=--openssl-legacy-provider && next dev",
     "build": "next build",
     "start": "next start",

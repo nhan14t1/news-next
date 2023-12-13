@@ -132,8 +132,8 @@ function Home() {
         <h2>{CATEGORIES.Global.name}</h2>
         {sectionCards(globalPosts, '#FFC107')}
 
-        <h2>Video</h2>
-        {sectionCards(videoPosts, '#388E3C')}
+        {/* <h2>Video</h2>
+        {sectionCards(videoPosts, '#388E3C')} */}
       </main>
     );
   };
