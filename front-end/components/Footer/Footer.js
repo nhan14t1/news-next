@@ -7,7 +7,7 @@ function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.container}`}>
-        <p className='text-center mb-0'>@ 2023 Giải trí 365</p>
+        <p className='text-center mb-0'>@ 2023 Showbiz 365</p>
       </div>
     </footer>
   );

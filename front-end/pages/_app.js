@@ -1,3 +1,8 @@
+import 'nprogress/nprogress.css';
+import 'react-quill/dist/quill.snow.css';
+import 'antd/dist/reset.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import '../styles/globals.scss';
 import '../styles/admin/admin-sidebar.css';
 import '../styles/app-box.scss';
@@ -9,10 +14,6 @@ import Layout from '../components/Layout/Layout';
 
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
-import 'react-quill/dist/quill.snow.css';
-import 'antd/dist/reset.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 // NProgress Customization
 NProgress.configure({
