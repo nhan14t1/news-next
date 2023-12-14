@@ -40,6 +40,9 @@ namespace NEWS.WebAPI.Middlewares
             }
 
             var baseEx = ex.GetBaseException();
+            //
+            // Return as json
+            context.Response.ContentType = "application/json";
 
             // Convert to model
             //var error = new ErrorResult("Sorry, an error has occurred");
@@ -55,10 +58,6 @@ namespace NEWS.WebAPI.Middlewares
             {
                 _logger.LogError(baseEx, baseEx.Message);
             }
-
-            //
-            // Return as json
-            context.Response.ContentType = "application/json";
 
             await context.Response.WriteAsync
             (

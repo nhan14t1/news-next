@@ -7,7 +7,7 @@ namespace NEWS.Entities.Services
 {
     public interface IPostService : IBaseService<Post>
     {
-        Task<Post> AddAsync(PostVM request, string email, FileManagement thumbnail);
+        Task<PostDto> AddAsync(PostVM request, string email, FileManagement thumbnail);
 
         Task<List<PostDto>> GetAllAsync();
 

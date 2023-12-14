@@ -57,7 +57,9 @@ const NewPost = props => {
     setLoading(true);
     post('/admin/post', {...postObj, imageUrls})
       .then(res => {
-        router.push('/admin/post-management');
+        if (res) {
+          router.push('/admin/post-management');
+        }
       }).finally(() => {
         setLoading(false);
       });

@@ -11,6 +11,7 @@ using NEWS.Entities.Repositories;
 using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
 using NEWS.Entities.Exceptions;
+using Microsoft.Extensions.Hosting;
 
 namespace NEWS.Services.Services
 {
@@ -34,7 +35,7 @@ namespace NEWS.Services.Services
             _logger = logger;
         }
 
-        public async Task<Post> AddAsync(PostVM request, string email, FileManagement thumbnail)
+        public async Task<PostDto> AddAsync(PostVM request, string email, FileManagement thumbnail)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             var newPost = new Post
@@ -96,12 +97,7 @@ namespace NEWS.Services.Services
                 throw;
             }
 
-            newPost.PostCategories = postCategories.Select(_ => new PostCategory {
-                Id = _.Id,
-                PostId = _.PostId,
-                CategoryId = _.CategoryId
-            }).ToList();
-            return newPost;
+            return _mapper.Map<PostDto>(newPost); ;
         }
 
         public async Task<PostDto> UpdateAsync(PostVM request)
