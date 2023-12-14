@@ -6,7 +6,7 @@ const config = {
     BASE_API_URL: process.env.BASE_API_URL,
   },
   images: {
-    domains: ['media.guim.co.uk', 'localhost'],
+    domains: ['media.guim.co.uk', 'localhost', 'api.showbiz365.net', 'api.giaitri365.net'],
   },
 };
 
