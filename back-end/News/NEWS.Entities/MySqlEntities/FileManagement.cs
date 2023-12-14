@@ -13,6 +13,8 @@ public partial class FileManagement
 
     public int Type { get; set; }
 
+    public string Description { get; set; } = null!;
+
     public long CreatedDate { get; set; }
 
     public bool IsUsed { get; set; }

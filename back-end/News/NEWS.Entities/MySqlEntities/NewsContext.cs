@@ -29,7 +29,6 @@ public partial class NewsContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
-   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -54,6 +53,10 @@ public partial class NewsContext : DbContext
 
             entity.ToTable("FileManagement");
 
+            entity.Property(e => e.Description)
+                .HasMaxLength(2000)
+                .HasDefaultValueSql("''")
+                .UseCollation("utf8mb4_0900_ai_ci");
             entity.Property(e => e.Extension)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("''");
