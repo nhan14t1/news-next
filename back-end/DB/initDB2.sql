@@ -43,7 +43,6 @@ CREATE TABLE `NewsNext`.FileManagement (
     Name varchar(255) NOT NULL,
     Extension VARCHAR(20) NOT NULL DEFAULT '',
     Type int NOT NULL default 1,
-    Description varchar(2000) character set utf8mb4 NOT NULL default '',
     CreatedDate BIGINT NOT NULL,
     IsUsed tinyint(1) not null default 0,
     PRIMARY KEY (Id)
