@@ -42,7 +42,7 @@ function Home() {
   const titleOnlyCards = (content, bgColor) => {
     return (
       <section className={styles.grid_wrap}>
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${styles.gridTitleOnly}`}>
           {content.map((item, idx) => (
             <Link
               key={`lnkTinyNews${item.id}`}
