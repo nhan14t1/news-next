@@ -1,7 +1,7 @@
 import styles from './Card.module.scss';
 import PropTypes from 'prop-types';
 
-function Card({ title, headline, thumbnail, bgColor }) {
+function Card({ title, headline, thumbnail, bgColor, isTopStory }) {
   const blankCard = () => {
     return (
       <div className={styles.fake}>
@@ -12,7 +12,7 @@ function Card({ title, headline, thumbnail, bgColor }) {
 
   return (
     <div className={styles.wrapper}>
-      <figure className={styles.figure}>
+      <figure className={`${styles.figure} ${isTopStory ? styles.figureTopStory : ''}`}>
         {thumbnail ? (
           <img className={styles.figure_img} src={thumbnail} alt={title} />
         ) : (

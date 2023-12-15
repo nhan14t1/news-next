@@ -24,7 +24,7 @@ function Home() {
       <>
         <section className={styles.grid_wrap}>
           <div className={styles.grid}>
-            {sectionCards(primary, '#388E3C')}
+            {sectionCards(primary, '#388E3C', true)}
             {titleOnlyCards(tertiary, [
               '#D32F2F',
               '#FFC107',
@@ -60,7 +60,7 @@ function Home() {
   };
 
   // 3-column layout grid
-  const sectionCards = (content, bgColor) => {
+  const sectionCards = (content, bgColor, isTopStory = false) => {
     if (!content || !content.length) {
       return <div className='pt-5'>Không có nội dung</div>
     }
@@ -80,6 +80,7 @@ function Home() {
                 headline={item.introText}
                 thumbnail={item.thumbnailFileName ? `${BASE_THUMBNAIL_URL}/${item.thumbnailFileName}` : TEST_IMAGE_URL}
                 bgColor={bgColor}
+                isTopStory={isTopStory}
               />
             </Link>
           ))}
