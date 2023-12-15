@@ -8,12 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, ScrollToTop } from '../components';
 import { appFetch } from '../shared/utils/apiUtils';
-import { BASE_THUMBNAIL_URL, WEB_NAME } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, WEB_NAME, WEB_URL } from '../shared/constants/app-const';
 import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
 
-function Article({ news }) {
+function Article({ news, query }) {
   const ADD_BOOKMARK = 'Add Bookmark';
   const REMOVE_BOOKMARK = 'Remove Bookmark';
 
@@ -33,6 +33,10 @@ function Article({ news }) {
     <div className='container'>
       <Head>
         <title>{`${news.title} - ${WEB_NAME}`}</title>
+        <meta property="og:url" content={`https://${WEB_URL}/article?id=${query.id}`} />
+        <meta property="og:title" content={news.title} />
+        <meta property="og:image" content={`${BASE_THUMBNAIL_URL}/${news.thumbnailFileName}`} />
+        <meta property="og:description" content={news.introText} />
       </Head>
 
       <main>
@@ -85,7 +89,7 @@ export async function getServerSideProps({query}) {
     };
   }
 
-  return { props: { news: data } };
+  return { props: { news: data, query } };
 }
 
 export default Article;

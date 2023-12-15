@@ -13,6 +13,8 @@ class MyDocument extends Document {
           <link rel='icon' href='/favicon.svg' />
           <meta name='description' content='Showbiz 365' />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
+          <meta property="og:type" content="article" />
+          <meta property="og:locale" content="vi_VN" />
         </Head>
         <body>
           <Main />

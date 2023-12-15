@@ -143,6 +143,10 @@ function Home() {
     <div className='container'>
       <Head>
         <title>{`${WEB_NAME} - Trang chủ`}</title>
+        <meta property="og:title" content="Showbiz 365" />
+        <meta property="og:image" content="https://showbiz365.net/assets/images/fb_preview.png" />
+        <meta property="og:description" content="Ăn dưa showbiz" />
+        <meta property="og:url" content="https://showbiz365.net" />
       </Head>
 
       {getContent()}
