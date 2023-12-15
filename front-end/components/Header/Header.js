@@ -9,12 +9,14 @@ function Header(props) {
       <div className={`${styles.container} container`}>
         <div className={styles.logo}>
           <Link href='/' onClick={props.onClick}>
-            <Image
-              src='/assets/KaiOS-Logo.svg'
-              alt='KaiOS Logo'
-              width={142}
-              height={25}
-            />
+            <img src='/assets/logo.svg' alt='Showbiz365 logo' style={{width: 'auto', height: '36px'}} />
+            {/* <Image
+              src='/assets/logo.svg'
+              alt='Showbiz365 logo'
+              width={50}
+              height={40}
+              style={{width: '150px', height: '25px'}}
+            /> */}
           </Link>
         </div>
         {/* <div className={styles.search}>

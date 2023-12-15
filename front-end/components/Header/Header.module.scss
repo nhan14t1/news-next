@@ -14,16 +14,14 @@ $lower: #F2F1EB;
         display: flex;
         margin: 0 auto;
         position: relative;
-        padding: 5px 0;
+        padding: 5px 16px;
         // padding-left: 15px;
         // padding-right: 15px;
         // max-width: 1140px;
         justify-content: space-between;
-        height: 40px;
 
         .logo {
             cursor: pointer;
-            padding-bottom: 5px;
         }
 
         .search {

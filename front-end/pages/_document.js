@@ -10,7 +10,7 @@ class MyDocument extends Document {
     return (
       <Html lang='vi'>
         <Head>
-          <link rel='icon' href='/favicon.png' />
+          <link rel='icon' href='/favicon.svg' />
           <meta name='description' content='Showbiz 365' />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         </Head>
