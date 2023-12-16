@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import getConfig from 'next/config';
 import Image from 'next/legacy/image';
 import dynamic from 'next/dynamic';
 import styles from '../styles/Article.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import { Button, ScrollToTop } from '../components';
+import { ScrollToTop } from '../components';
 import { appFetch } from '../shared/utils/apiUtils';
-import { BASE_THUMBNAIL_URL, WEB_NAME, WEB_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, WEB_NAME, BASE_URL } from '../shared/constants/app-const';
 import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
@@ -33,7 +32,8 @@ function Article({ news, query }) {
     <div className='container'>
       <Head>
         <title>{`${news.title} - ${WEB_NAME}`}</title>
-        <meta property="og:url" content={`https://${WEB_URL}/article?id=${query.id}`} />
+        <meta name="description" content={news.introText} />
+        <meta property="og:url" content={`${BASE_URL}/article?id=${query.id}`} />
         <meta property="og:title" content={news.title} />
         <meta property="og:image" content={`${BASE_THUMBNAIL_URL}/${news.thumbnailFileName}`} />
         <meta property="og:description" content={news.introText} />
@@ -59,7 +59,7 @@ function Article({ news, query }) {
             {news.thumbnailFileName ? (
               <Image
                 src={`${BASE_THUMBNAIL_URL}/${news.thumbnailFileName}`}
-                alt='Article media'
+                alt={news.introText}
                 width={500}
                 height={300}
               />

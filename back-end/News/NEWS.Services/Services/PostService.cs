@@ -252,8 +252,30 @@ namespace NEWS.Services.Services
             }
 
             post.IsDeleted = true;
+            post.Status = (int)PostStatus.Deleted;
             post.UpdatedDate = DateTime.Now.ToTimeStamp();
             await _repository.UpdateAsync(post);
+        }
+
+        public async Task<List<PostDto>> GetPostMap()
+        {
+            var posts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active)
+                .Include(_ => _.Thumbnail)
+                .AsNoTracking()
+                .OrderByDescending(_ => _.UpdatedDate)
+                .Take(200)
+                .Select(_ => new PostDto
+                {
+                    Id = _.Id,
+                    Slug = _.Slug,
+                    UpdatedDate = _.UpdatedDate,
+                    Title = _.Title,
+                    IntroText = _.IntroText,
+                    ThumbnailFileName = _.Thumbnail != null ? _.Thumbnail.Name : ""
+                })
+                .ToListAsync();
+
+            return posts;
         }
     }
 }

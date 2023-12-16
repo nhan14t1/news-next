@@ -11,10 +11,10 @@ class MyDocument extends Document {
       <Html lang='vi'>
         <Head>
           <link rel='icon' href='/favicon.svg' />
-          <meta name='description' content='Showbiz 365' />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
           <meta property="og:type" content="article" />
           <meta property="og:locale" content="vi_VN" />
+          <meta property="fb:app_id" content="24213169571660041" />
         </Head>
         <body>
           <Main />

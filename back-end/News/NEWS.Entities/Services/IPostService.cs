@@ -20,5 +20,7 @@ namespace NEWS.Entities.Services
         Task<PostDto> UpdateAsync(PostVM request);
 
         Task DeleteAsync(int id);
+        
+        Task<List<PostDto>> GetPostMap();
     }
 }

@@ -11,6 +11,7 @@
         Active = 1,
         Schedule = 2,
         Draft = 3,
+        Deleted = 4,
     }
 
     public enum AppCategory
