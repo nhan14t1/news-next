@@ -19,6 +19,7 @@ namespace NEWS.WebAPI.Controllers
         [HttpGet("home-page")]
         public async Task<ActionResult> GetHomePageData()
         {
+            _logger.LogInformation("Access home page test");
             var data = await _postService.GetHomePageData();
             return Ok(data);
         }
