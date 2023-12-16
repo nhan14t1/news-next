@@ -2,6 +2,7 @@
 using NEWS.Entities.Exceptions;
 using NEWS.Entities.Models.Responses;
 using NEWS.Entities.Utils;
+using System.Buffers.Text;
 using System.Net;
 using System.Text.Json;
 
@@ -28,6 +29,7 @@ namespace NEWS.WebAPI.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Flag ex: {ex.Message}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
