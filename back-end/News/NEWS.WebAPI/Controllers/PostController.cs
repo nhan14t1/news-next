@@ -11,15 +11,15 @@ namespace NEWS.WebAPI.Controllers
     {
         private readonly IPostService _postService;
         private ILogger<PostController> _logger;
-        public PostController(IPostService postService)
+        public PostController(IPostService postService, ILogger<PostController> logger)
         {
             _postService = postService;
+            _logger = logger;
         }
 
         [HttpGet("home-page")]
         public async Task<ActionResult> GetHomePageData()
         {
-            throw new NotImplementedException();
             var data = await _postService.GetHomePageData();
             return Ok(data);
         }
@@ -35,7 +35,6 @@ namespace NEWS.WebAPI.Controllers
         public async Task<ActionResult> GetPostMap()
         {
             _logger.LogInformation("Access site map");
-
             try
             {
                 var data = await _postService.GetPostMap();
@@ -43,7 +42,7 @@ namespace NEWS.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"GetPostMap Exception {ex.Message} - {ex.StackTrace}");
+                _logger.LogError(ex, $"{ex.Message} - {ex.StackTrace}");
                 throw;
             }
         }

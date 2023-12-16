@@ -29,7 +29,7 @@ namespace NEWS.WebAPI.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Flag ex: {ex.Message}");
+                _logger.LogDebug(ex, $"Flag ex: {ex.Message}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
