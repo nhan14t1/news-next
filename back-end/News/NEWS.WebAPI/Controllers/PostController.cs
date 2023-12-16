@@ -10,6 +10,7 @@ namespace NEWS.WebAPI.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
+        private ILogger<PostController> _logger;
         public PostController(IPostService postService)
         {
             _postService = postService;
@@ -32,8 +33,18 @@ namespace NEWS.WebAPI.Controllers
         [HttpGet("site-map")]
         public async Task<ActionResult> GetPostMap()
         {
-            var data = await _postService.GetPostMap();
-            return Ok(data);
+            _logger.LogInformation("Access site map");
+
+            try
+            {
+                var data = await _postService.GetPostMap();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"GetPostMap Exception {ex.Message} - {ex.StackTrace}");
+                throw;
+            }
         }
     }
 }
