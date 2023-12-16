@@ -19,7 +19,7 @@ namespace NEWS.WebAPI.Controllers
         [HttpGet("home-page")]
         public async Task<ActionResult> GetHomePageData()
         {
-            _logger.LogInformation("Access home page test");
+            throw new NotImplementedException();
             var data = await _postService.GetHomePageData();
             return Ok(data);
         }
