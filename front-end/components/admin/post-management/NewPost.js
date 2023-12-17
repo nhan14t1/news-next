@@ -28,20 +28,19 @@ const NewPost = props => {
   }, []);
 
   const getData = (id) => {
-    setLoading(true)
+    // setLoading(true)
     get(`/admin/post/${id}`)
       .then(res => {
         if (res && res.data) {
-          setLoading(false);
+          // setLoading(false);
           const postObj = res.data;
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
           console.log(postObj);
           setPostObj(postObj);
-          setPostObj({...postObj});
         }
       }).catch(res => {
         setIsError(true);
-        setLoading(false);
+        // setLoading(false);
       }).finally(() => {});
   }
 
