@@ -34,11 +34,11 @@ const NewPost = props => {
       .then(res => {
         if (res && res.data) {
           // setLoading(false);
-          const postObj = res.data;
-          postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
-          console.log(postObj);
-          setPostObj(postObj);
-          setTitle(postObj.title);
+          const data = res.data;
+          data.categoryIds = (data.categories || []).map(_ => _.id);
+          console.log(data);
+          setPostObj({...data});
+          setTitle(data.title);
         }
       }).catch(res => {
         setIsError(true);
