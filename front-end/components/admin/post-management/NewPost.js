@@ -13,7 +13,7 @@ import { useSearchParams } from 'next/navigation';
 
 const NewPost = props => {
   const router = useRouter();
-  const [postObj, setPostObj] = useState({ title: '' });
+  const [postObj, setPostObj] = useState({ title: '', content: '' });
   const [title, setTitle] = useState('');
   const [isError, setIsError] = useState(false);
   const { setLoading } = useContext(AppContext);
@@ -172,7 +172,7 @@ const NewPost = props => {
 
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
-        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })} />
+        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => { setPostObj({ ...postObj, content }); console.log('On content changed')}} />
       </div>
 
       <div className='mt-5 pt-3 d-flex'>
