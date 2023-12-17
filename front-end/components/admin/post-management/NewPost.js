@@ -13,8 +13,7 @@ import { useSearchParams } from 'next/navigation';
 
 const NewPost = props => {
   const router = useRouter();
-  const [postObj, setPostObj] = useState({ title: '', content: '' });
-  const [title, setTitle] = useState('');
+  const [postObj, setPostObj] = useState({});
   const [isError, setIsError] = useState(false);
   const { setLoading } = useContext(AppContext);
 
@@ -29,21 +28,17 @@ const NewPost = props => {
   }, []);
 
   const getData = (id) => {
-    // setLoading(true)
+    setLoading(true)
     get(`/admin/post/${id}`)
       .then(res => {
         if (res && res.data) {
-          // setLoading(false);
-          const data = res.data;
-          data.categoryIds = (data.categories || []).map(_ => _.id);
-          console.log(data);
-          setPostObj({...data});
-          setTitle(data.title);
+          const postObj = res.data;
+          postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
+          setPostObj(postObj);
         }
-      }).catch(res => {
+      }).catch(err => {
         setIsError(true);
-        // setLoading(false);
-      }).finally(() => { });
+      }).finally(() => setLoading(false));
   }
 
   const onTitleBlur = () => {
@@ -103,21 +98,14 @@ const NewPost = props => {
     return <Empty description="Không có dữ liệu" className='pt-5'></Empty>
   }
 
-  console.log(`postObj`);
-  console.log(postObj);
-
   return <div className='new-post'>
     <div className='app-box'>
       <h2>Tạo bài viết</h2>
       <b className='mt-5 d-block'>Tiêu đề:</b>
       <div className='mt-2'>
-        {/* <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
+        <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
           value={postObj.title}
           onChange={e => setPostObj({ ...postObj, title: e.target.value })}
-          onBlur={e => onTitleBlur()}></Input> */}
-        <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
-          value={title}
-          onChange={e => setTitle(e.target.value)}
           onBlur={e => onTitleBlur()}></Input>
       </div>
 
@@ -184,7 +172,7 @@ const NewPost = props => {
         </div>
       </div>
     </div>
-  </div>;
+  </div>
 }
 
 export default NewPost;
