@@ -66,7 +66,7 @@ const HtmlEditor = (props) => {
   return (
     <ReactQuill
       key="quill-html"
-      onChange={html => props.onChange(html)}
+      onChange={(html, delta, source) => { console.log(source); source == 'user' && props.onChange(html);}}
       theme="snow"
       className='quill-editor'
       modules={moduleMemo}
