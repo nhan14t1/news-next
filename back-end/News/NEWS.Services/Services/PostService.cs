@@ -159,7 +159,7 @@ namespace NEWS.Services.Services
 
                 if (categoriesToDelete.Any())
                 {
-                    _unitOfWork.DbContext.RemoveRange(categoriesToAdd);
+                    _unitOfWork.DbContext.RemoveRange(categoriesToDelete);
                 }
 
                 await _unitOfWork.SaveChangesAsync();

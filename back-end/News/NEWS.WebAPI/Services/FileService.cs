@@ -61,7 +61,7 @@ namespace NEWS.WebAPI.Services
 
         public async Task<FileInformation> UploadBase64Async(ImageInfo info, FileType type)
         {
-            if (info == null && string.IsNullOrEmpty(info.Base64))
+            if (info == null || string.IsNullOrEmpty(info.Base64))
             {
                 return null;
             }
