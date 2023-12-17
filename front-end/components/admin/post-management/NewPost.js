@@ -156,10 +156,10 @@ const NewPost = props => {
       </div>
 
       <div className='mt-3'><b>Thumbnail:</b></div>
-      <div className='mt-2'>
+      {/* <div className='mt-2'>
         <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({...postObj, thumbnail})}
           onCropped={base64 => setPostObj({...postObj, thumbnail: { ...postObj.thumbnail, base64}})} onCancelled={() => setPostObj({...postObj, thumbnail: null})}/> 
-      </div>
+      </div> */}
       
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
