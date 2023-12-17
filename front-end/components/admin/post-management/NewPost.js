@@ -32,14 +32,17 @@ const NewPost = props => {
     get(`/admin/post/${id}`)
       .then(res => {
         if (res && res.data) {
+          setLoading(false);
           const postObj = res.data;
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
+          console.log(postObj);
           setPostObj(postObj);
           setPostObj({...postObj});
         }
       }).catch(res => {
         setIsError(true);
-      }).finally(() => setLoading(false));
+        setLoading(false);
+      }).finally(() => {});
   }
 
   const onTitleBlur = () => {
