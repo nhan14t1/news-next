@@ -103,6 +103,9 @@ const NewPost = props => {
     return <Empty description="Không có dữ liệu" className='pt-5'></Empty>
   }
 
+  console.log(`postObj`);
+  console.log(postObj);
+
   return <div className='new-post'>
     <div className='app-box'>
       <h2>Tạo bài viết</h2>
