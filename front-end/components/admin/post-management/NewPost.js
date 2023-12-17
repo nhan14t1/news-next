@@ -35,7 +35,7 @@ const NewPost = props => {
           const postObj = res.data;
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
           setPostObj(postObj);
-          setPostObj(postObj);
+          setPostObj({...postObj});
         }
       }).catch(res => {
         setIsError(true);
