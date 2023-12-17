@@ -13,15 +13,16 @@ import { useSearchParams } from 'next/navigation';
 
 const NewPost = props => {
   const router = useRouter();
-  const [postObj, setPostObj] = useState({ title: ''});
+  const [postObj, setPostObj] = useState({ title: '' });
+  const [title, setTitle] = useState('');
   const [isError, setIsError] = useState(false);
-  const { setLoading } = useContext(AppContext); 
+  const { setLoading } = useContext(AppContext);
 
   const categoryOptions = Object.values(CATEGORIES).map(_ => ({ value: _.id, label: _.name }));
 
   const isEdit = () => postObj && postObj.id;
   const params = useSearchParams()
-  
+
   useEffect(() => {
     const id = params.get('id');
     id && getData(id);
@@ -37,11 +38,12 @@ const NewPost = props => {
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
           console.log(postObj);
           setPostObj(postObj);
+          setTitle(postObj.title);
         }
       }).catch(res => {
         setIsError(true);
         // setLoading(false);
-      }).finally(() => {});
+      }).finally(() => { });
   }
 
   const onTitleBlur = () => {
@@ -58,7 +60,7 @@ const NewPost = props => {
     var imageUrls = processImageUrls();
 
     setLoading(true);
-    post('/admin/post', {...postObj, imageUrls})
+    post('/admin/post', { ...postObj, imageUrls })
       .then(res => {
         if (res) {
           router.push('/admin/post-management');
@@ -76,7 +78,7 @@ const NewPost = props => {
     var imageUrls = processImageUrls();
 
     setLoading(true);
-    put('/admin/post', {...postObj, imageUrls})
+    put('/admin/post', { ...postObj, imageUrls })
       .then(res => {
         router.push('/admin/post-management');
       }).finally(() => {
@@ -106,9 +108,13 @@ const NewPost = props => {
       <h2>Tạo bài viết</h2>
       <b className='mt-5 d-block'>Tiêu đề:</b>
       <div className='mt-2'>
-        <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
+        {/* <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
           value={postObj.title}
           onChange={e => setPostObj({ ...postObj, title: e.target.value })}
+          onBlur={e => onTitleBlur()}></Input> */}
+        <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
+          value={title}
+          onChange={e => setTitle(e.target.value)}
           onBlur={e => onTitleBlur()}></Input>
       </div>
 
@@ -157,13 +163,13 @@ const NewPost = props => {
 
       <div className='mt-3'><b>Thumbnail:</b></div>
       <div className='mt-2'>
-        <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({...postObj, thumbnail})}
-          onCropped={base64 => setPostObj({...postObj, thumbnail: { ...postObj.thumbnail, base64}})} onCancelled={() => setPostObj({...postObj, thumbnail: null})}/> 
+        <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({ ...postObj, thumbnail })}
+          onCropped={base64 => setPostObj({ ...postObj, thumbnail: { ...postObj.thumbnail, base64 } })} onCancelled={() => setPostObj({ ...postObj, thumbnail: null })} />
       </div>
-      
+
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
-        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })}/>
+        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })} />
       </div>
 
       <div className='mt-5 pt-3 d-flex'>
