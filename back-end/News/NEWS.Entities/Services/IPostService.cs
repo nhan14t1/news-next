@@ -17,7 +17,7 @@ namespace NEWS.Entities.Services
      
         Task<PostDto> GetByIdAsync(int id);
 
-        Task<PostDto> UpdateAsync(PostVM request);
+        Task<PostDto> UpdateAsync(PostVM request, FileManagement thumbnail);
 
         Task DeleteAsync(int id);
         

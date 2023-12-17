@@ -100,9 +100,10 @@ namespace NEWS.Services.Services
             return _mapper.Map<PostDto>(newPost); ;
         }
 
-        public async Task<PostDto> UpdateAsync(PostVM request)
+        public async Task<PostDto> UpdateAsync(PostVM request, FileManagement thumbnail)
         {
             var post = await _repository.GetAll(_ => _.Id == request.Id && !_.IsDeleted)
+                .Include(_ => _.Thumbnail)
                 .Include(_ => _.PostCategories)
                 .FirstOrDefaultAsync();
 
@@ -132,6 +133,22 @@ namespace NEWS.Services.Services
             try
             {
                 await _unitOfWork.BeginTransaction();
+
+                if (thumbnail != null)
+                {
+                    var previousThumbnail = post.Thumbnail;
+
+                    post.ThumbnailId = thumbnail.Id;
+                    thumbnail.IsUsed = true;
+                    _unitOfWork.DbContext.Update(thumbnail);
+
+                    // Delete previous thumbnail
+                    if (previousThumbnail != null)
+                    {
+                        previousThumbnail.IsUsed = false;
+                        _unitOfWork.DbContext.Update(previousThumbnail);
+                    }
+                }
 
                 _unitOfWork.DbContext.Update(post);
 

@@ -56,7 +56,10 @@ namespace NEWS.WebAPI.Controllers.Admin
         [HttpPut]
         public async Task<ActionResult> UpdateAsync([FromBody] PostVM request)
         {
-            var post = await _postService.UpdateAsync(request);
+            var fileInfo = await _fileService.UploadThumbnailBase64Async(request.Thumbnail);
+            var fileThumbnail = fileInfo != null ? await _fileManagementService.AddThumbnail(fileInfo.Name, fileInfo.Extension) : null;
+
+            var post = await _postService.UpdateAsync(request, fileThumbnail);
             return Ok(post);
         }
 

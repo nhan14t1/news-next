@@ -1,4 +1,4 @@
-import { Button, Empty, Input, Select } from 'antd';
+import { Button, Empty, Input, Select, Typography  } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { CATEGORIES, IMAGE_POST_PREFIX } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
@@ -152,7 +152,13 @@ const NewPost = props => {
         <Input key='label' className='w-100' placeholder='Chưa có chức năng nhãn'></Input>
       </div>
 
-      <div className='mt-3'><b>Thumbnail:</b></div>
+      <div className='mt-3'>
+        <b>Thumbnail:</b>
+      
+          { isEdit() &&
+            <span> &nbsp;<Typography.Text type="secondary">(Chế độ edit sẽ không hiển thị thumbnail trước đó, nhưng vẫn có thể đổi thumbnail)</Typography.Text></span>
+          }
+      </div>
       <div className='mt-2'>
         <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({ ...postObj, thumbnail })}
           onCropped={base64 => setPostObj({ ...postObj, thumbnail: { ...postObj.thumbnail, base64 } })} onCancelled={() => setPostObj({ ...postObj, thumbnail: null })} />
