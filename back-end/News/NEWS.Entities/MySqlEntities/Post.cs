@@ -15,6 +15,8 @@ public partial class Post
 
     public string Content { get; set; } = null!;
 
+    public int Views { get; set; }
+
     public int UserId { get; set; }
 
     public int Status { get; set; }

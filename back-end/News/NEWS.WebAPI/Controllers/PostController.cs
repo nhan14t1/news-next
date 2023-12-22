@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NEWS.Entities.Constants;
+using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
+using NEWS.Services.Services;
 
 namespace NEWS.WebAPI.Controllers
 {
@@ -45,6 +48,19 @@ namespace NEWS.WebAPI.Controllers
                 _logger.LogError(ex, $"{ex.Message} - {ex.StackTrace}");
                 throw;
             }
+        }
+
+        [HttpPut("views/{postId}")]
+        public async Task<ActionResult> UpdateViews(int postId)
+        {
+            var isAdmin = User.IsInRole(AppRoles.Admin.ToString());
+
+            // Don't flag when admin view post
+            if (!isAdmin)
+            {
+                await _postService.UpdateViews(postId);
+            }
+            return Ok(true);
         }
     }
 }

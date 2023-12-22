@@ -22,5 +22,7 @@ namespace NEWS.Entities.Services
         Task DeleteAsync(int id);
         
         Task<List<PostDto>> GetPostMap();
+
+        Task UpdateViews(int postId);
     }
 }

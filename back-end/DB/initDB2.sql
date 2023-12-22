@@ -54,6 +54,7 @@ CREATE TABLE `NewsNext`.Post (
     IntroText varchar(2000) character set utf8mb4 NOT NULL default '',
     Slug varchar(255) NOT NULL default '',
     Content TEXT character set utf8mb4 NOT NULL,
+    Views int not null default 0,
     UserId int not null,
     Status int not null default 1,
     ThumbnailId int,

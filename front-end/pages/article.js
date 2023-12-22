@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/legacy/image';
 import dynamic from 'next/dynamic';
@@ -6,7 +6,7 @@ import styles from '../styles/Article.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { ScrollToTop } from '../components';
-import { appFetch } from '../shared/utils/apiUtils';
+import { appFetch, put } from '../shared/utils/apiUtils';
 import { BASE_THUMBNAIL_URL, WEB_NAME, BASE_URL } from '../shared/constants/app-const';
 import * as moment from 'moment';
 
@@ -25,6 +25,16 @@ function Article({ news, query }) {
     setBookmark(!bookmark);
     setButtonText(!bookmark ? REMOVE_BOOKMARK : ADD_BOOKMARK);
   };
+
+  const countViews = () => {
+    put(`/post/views/${news.id}`, null, true, false)
+      .then(res => {})
+      .catch(err => console.log(err));
+  }
+
+  useEffect(() => {
+    countViews();
+  }, [])
 
   const iconCalendar = <FontAwesomeIcon icon={faCalendarAlt} color='#3c3c3c' />;
 

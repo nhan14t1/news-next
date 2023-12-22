@@ -60,11 +60,11 @@ export const postFile = (url, data, isCatchError = true) => {
     });;
 }
 
-export const put = (url, data, isCatchError = true) => {
+export const put = (url, data, isCatchError = true, showErrorAlert = true) => {
   return axios.put(BASE_API_URL + url, data, getOptions())
     .catch((res) => {
-      handleError(res, isCatchError);
-    });;
+      handleError(res, isCatchError, showErrorAlert);
+    });
 }
 
 export const deleteAPI = (url, isCatchError = true) => {
@@ -74,7 +74,7 @@ export const deleteAPI = (url, isCatchError = true) => {
     });
 }
 
-const handleError = (error, isCatchError = true) => {
+const handleError = (error, isCatchError = true, showErrorAlert = true) => {
   if (!error || !error.response) {
     return;
   }
@@ -104,7 +104,7 @@ const handleError = (error, isCatchError = true) => {
   let messageError = res && res.data && res.data.message
     ? res.data.message : 'Sorry, an error has occurred';
 
-  errorAlert(messageError);
+  showErrorAlert && errorAlert(messageError);
   if (isCatchError) {
     throw error;
   }

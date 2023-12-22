@@ -233,7 +233,7 @@ namespace NEWS.Services.Services
             var topPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
-                .OrderByDescending(_ => _.Id)
+                .OrderByDescending(_ => _.Views)
                 .Take(8)
                 .ToListAsync();
 
@@ -311,6 +311,14 @@ namespace NEWS.Services.Services
                 .ToListAsync();
 
             return posts;
+        }
+
+        public async Task UpdateViews(int postId)
+        {
+            var post = await _repository.GetAll(_ => _.Id == postId && !_.IsDeleted)
+                .FirstOrDefaultAsync();
+            post.Views += 1;
+            await _repository.UpdateAsync(post);
         }
     }
 }
