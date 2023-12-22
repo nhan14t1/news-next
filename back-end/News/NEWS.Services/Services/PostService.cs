@@ -35,6 +35,14 @@ namespace NEWS.Services.Services
             _logger = logger;
         }
 
+        private async Task<bool> IsSlugExisted(string slug, int exceptPostId = 0)
+        {
+            var post = await _repository.GetAll(_ => _.Slug == slug && (exceptPostId == 0 || _.Id != exceptPostId))
+                .FirstOrDefaultAsync();
+            
+            return post != null;
+        }
+
         public async Task<PostDto> AddAsync(PostVM request, string email, FileManagement thumbnail)
         {
             var user = await _userRepository.GetByEmailAsync(email);
@@ -49,6 +57,10 @@ namespace NEWS.Services.Services
                 Status = request.Status,
                 CreatedDate = DateTime.Now.ToTimeStamp()
             };
+
+            if (!string.IsNullOrWhiteSpace(newPost.Slug) && await IsSlugExisted(newPost.Slug)) {
+                throw new BusinessException("Slug đã tồn tại, đổi một slug khác");
+            }
 
             var postCategories = request.CategoryIds != null
                     ? request.CategoryIds.Select(categoryId => new PostCategory
@@ -112,6 +124,11 @@ namespace NEWS.Services.Services
             post.IntroText = request.IntroText;
             post.Content = request.Content;
             post.UpdatedDate = DateTime.Now.ToTimeStamp();
+
+            if (!string.IsNullOrWhiteSpace(post.Slug) && await IsSlugExisted(post.Slug, post.Id))
+            {
+                throw new BusinessException("Slug đã tồn tại, đổi một slug khác");
+            }
 
             var newCategories = request.CategoryIds != null
                     ? request.CategoryIds.Select(categoryId => new PostCategory
