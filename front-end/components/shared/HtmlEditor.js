@@ -39,7 +39,7 @@ const HtmlEditor = (props) => {
     ],
     imageUploader: {
       upload: async (file) => {
-        const compressedFile = await compressFile(file, 0.5, 1200);
+        const compressedFile = await compressFile(file, 0.3, 1200);
 
         return new Promise((resolve, reject) => {
           const formData = new FormData();
