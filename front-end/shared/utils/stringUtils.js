@@ -12,7 +12,7 @@ export const toSlug = (str) => {
   str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
   str = str.replace(/đ/gi, 'd');
   //Xóa các ký tự đặt biệt
-  str = str.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
+  str = str.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\]|\[|\;|_/gi, '');
   //Đổi khoảng trắng thành ký tự gạch ngang
   str = str.replace(/ /gi, "-");
   //Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
