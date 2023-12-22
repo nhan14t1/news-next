@@ -4,8 +4,6 @@ import classes from './Crop.module.scss';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from './components/cropImageHelper';
 
-let cropTimer;
-
 const ImageCropModal = ({ base64, open, onDone, onCancel }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
@@ -13,8 +11,14 @@ const ImageCropModal = ({ base64, open, onDone, onCancel }) => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
   const [croppedBase64, setCroppedBase64] = useState(null)
 
-  const onCropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels)
+  const onCropComplete = (croppedArea, newCroppedAreaPixels) => {
+    // Hack
+    if (croppedBase64 && (isNaN(newCroppedAreaPixels.x) 
+      || newCroppedAreaPixels.x == croppedAreaPixels.croppedAreaPixels && newCroppedAreaPixels.y == croppedAreaPixels.croppedAreaPixels)) {
+      return;
+    }
+    setCroppedAreaPixels(newCroppedAreaPixels)
+    doCrop(newCroppedAreaPixels);
   }
 
   const onCropChange = (newCrop) => {
@@ -22,29 +26,21 @@ const ImageCropModal = ({ base64, open, onDone, onCancel }) => {
     if (croppedBase64 && (!newCrop.x && !newCrop.y || newCrop.x == crop.x && newCrop.y == crop.y)) {
       return;
     }
-
     setCrop(newCrop);
-    doCropDebounce();
   }
 
-  const doCrop = async () => {
+  const doCrop = async (croppedAreaPixels) => {
     try {
       const croppedBase64 = await getCroppedImg(
         base64,
         croppedAreaPixels,
         rotation
       )
+
       setCroppedBase64(croppedBase64);
     } catch (e) {
-      console.error(e)
+      console.log(e);
     }
-  }
-
-  const doCropDebounce = () => {
-    clearTimeout(cropTimer);
-    cropTimer = setTimeout(() => {
-      doCrop();
-    }, 300);
   }
 
   const renderCrop = () => {
