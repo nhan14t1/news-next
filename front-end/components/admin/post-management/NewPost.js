@@ -10,6 +10,7 @@ import HtmlEditor from '../../shared/HtmlEditor';
 import ThumbnailUpload from './components/ThumbnailUpload';
 import AppContext from '../../../shared/contexts/AppContext';
 import { useSearchParams } from 'next/navigation';
+import { compressBase64 } from '../../../shared/utils/imageCompressUtils';
 
 const NewPost = props => {
   const router = useRouter();
@@ -94,6 +95,11 @@ const NewPost = props => {
     return true;
   }
 
+  const onThumbnailChanged = async (base64) => {
+    const compressedBase64 = await compressBase64(base64, 0.3, 500);
+    setPostObj({ ...postObj, thumbnail: { ...postObj.thumbnail, base64: compressedBase64 } });
+  }
+
   if (isError) {
     return <Empty description="Không có dữ liệu" className='pt-5'></Empty>
   }
@@ -161,12 +167,12 @@ const NewPost = props => {
       </div>
       <div className='mt-2'>
         <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({ ...postObj, thumbnail })}
-          onCropped={base64 => setPostObj({ ...postObj, thumbnail: { ...postObj.thumbnail, base64 } })} onCancelled={() => setPostObj({ ...postObj, thumbnail: null })} />
+          onCropped={base64 => onThumbnailChanged(base64)} onCancelled={() => setPostObj({ ...postObj, thumbnail: null })} />
       </div>
 
       <div className='mt-3'><b>Nội dung:</b></div>
       <div className='mt-2'>
-        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => { setPostObj({ ...postObj, content }); console.log('On content changed')}} />
+        <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })} />
       </div>
 
       <div className='mt-5 pt-3 d-flex'>

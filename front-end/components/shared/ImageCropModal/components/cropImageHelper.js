@@ -89,9 +89,6 @@ export default async function getCroppedImg(
     pixelCrop.height
   )
 
-  // As Base64 string
-  // return croppedCanvas.toDataURL('image/jpeg');
-
   // As a blob
   return new Promise((resolve, reject) => {
     resolve(croppedCanvas.toDataURL());
