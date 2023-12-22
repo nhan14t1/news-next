@@ -55,7 +55,7 @@ const NewPost = props => {
     var imageUrls = processImageUrls();
 
     setLoading(true);
-    post('/admin/post', { ...postObj, imageUrls })
+    post('/admin/post', { ...postObj, imageUrls }, false)
       .then(res => {
         if (res) {
           router.push('/admin/post-management');
@@ -73,7 +73,7 @@ const NewPost = props => {
     var imageUrls = processImageUrls();
 
     setLoading(true);
-    put('/admin/post', { ...postObj, imageUrls })
+    put('/admin/post', { ...postObj, imageUrls }, false)
       .then(res => {
         router.push('/admin/post-management');
       }).finally(() => {

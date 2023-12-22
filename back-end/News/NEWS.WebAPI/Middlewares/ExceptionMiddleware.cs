@@ -11,14 +11,12 @@ namespace NEWS.WebAPI.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        //private readonly ILogger<ExceptionMiddleware> _logger;
-        private static ILoggerFactory loggerFactory = new LoggerFactory();
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        private static ILogger _logger = loggerFactory.CreateLogger(nameof(ExceptionMiddleware));
-
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
@@ -29,7 +27,6 @@ namespace NEWS.WebAPI.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex, $"Flag ex: {ex.Message}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
@@ -47,18 +44,19 @@ namespace NEWS.WebAPI.Middlewares
             context.Response.ContentType = "application/json";
 
             // Convert to model
-            //var error = new ErrorResult("Sorry, an error has occurred");
-            var error = new ErrorResult($"{baseEx.Message} - {baseEx.StackTrace}");
+            var error = new ErrorResult("Sorry, an error has occurred");
             if (ex is BusinessException)
             {
                 context.Response.StatusCode = 700;
                 error.StatusCode = 700;
                 error.Message = baseEx.Message;
-                _logger.LogInformation(baseEx, baseEx.Message);
+                _logger.LogInformation(baseEx, $"{baseEx.Message} - {baseEx.StackTrace}");
             }
             else
             {
-                _logger.LogError(baseEx, baseEx.Message);
+                context.Response.StatusCode = 500;
+                error.StatusCode = 500;
+                _logger.LogError(baseEx, $"{baseEx.Message} - {baseEx.StackTrace}");
             }
 
             await context.Response.WriteAsync
