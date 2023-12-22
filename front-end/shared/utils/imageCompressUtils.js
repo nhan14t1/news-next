@@ -1,15 +1,21 @@
 
 import Compress from 'compress.js';
 
-export const compressBase64 = async (base64, size, maxWidth) => {
-  let minePrefix = base64.match(/data:.+base64,/)?.[0] || '';
+export const compressBase64 = async (base64Str, size, maxWidth) => {
+  let minePrefix = base64Str.match(/data:.+base64,/)?.[0] || '';
   let mine = minePrefix.replace('data:', '').replace(';base64,', '') || undefined;
-  console.log(mine);
-  const compressedBase64 = await compressFile(Compress.convertBase64ToFile(base64.replace(minePrefix, ''), mine), size, maxWidth);
-  return minePrefix + compressedBase64;
+  const { base64 } = await compressFileToBase64(Compress.convertBase64ToFile(base64Str.replace(minePrefix, ''), mine), size, maxWidth);
+  return minePrefix + base64;
 }
 
-export const compressFile = async (file, size = 1, maxWidth = 1920) => {
+export const compressFile = async (file, size, maxWidth) => {
+  const { base64, ext } = await compressFileToBase64(file, size, maxWidth);
+
+  const outputFile = Compress.convertBase64ToFile(base64, ext)
+  return outputFile;
+}
+
+const compressFileToBase64 = async (file, size = 1, maxWidth = 1920) => {
   var compress = new Compress();
 
   const resizedImage = await compress.compress([file], {
@@ -21,9 +27,7 @@ export const compressFile = async (file, size = 1, maxWidth = 1920) => {
   })
 
   const img = resizedImage[0];
-  const base64str = img.data;
-  return base64str;
-  // const imgExt = img.ext
-  // const resizedFiile = Compress.convertBase64ToFile(base64str, imgExt)
-  // return resizedFiile;
+  const base64 = img.data;
+  const ext = img.ext;
+  return { base64, ext };
 }

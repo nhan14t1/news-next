@@ -4,6 +4,7 @@ import ImageUploader from "quill-image-uploader";
 import { useMemo } from 'react';
 import { postFile } from '../../shared/utils/apiUtils';
 import { BASE_IMAGE_URL } from '../../shared/constants/app-const';
+import { compressFile } from '../../shared/utils/imageCompressUtils';
 
 Quill.register("modules/imageUploader", ImageUploader);
 
@@ -37,10 +38,12 @@ const HtmlEditor = (props) => {
       ["clean"]
     ],
     imageUploader: {
-      upload: (file) => {
+      upload: async (file) => {
+        const compressedFile = await compressFile(file, 0.5, 1200);
+
         return new Promise((resolve, reject) => {
           const formData = new FormData();
-          formData.append("image", file);
+          formData.append("image", new File([compressedFile], file.name));
 
           postFile('/admin/file/image', formData)
             .then((result) => {
@@ -54,10 +57,6 @@ const HtmlEditor = (props) => {
         });
       }
     }
-  }
-
-  const uploadImage = async (file) => {
-
   }
 
   const moduleMemo = useMemo(() => modules, [])
