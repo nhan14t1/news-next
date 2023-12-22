@@ -124,6 +124,7 @@ namespace NEWS.Services.Services
             post.IntroText = request.IntroText;
             post.Content = request.Content;
             post.UpdatedDate = DateTime.Now.ToTimeStamp();
+            post.Status = request.Status;
 
             if (!string.IsNullOrWhiteSpace(post.Slug) && await IsSlugExisted(post.Slug, post.Id))
             {

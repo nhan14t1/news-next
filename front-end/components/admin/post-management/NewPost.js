@@ -1,6 +1,6 @@
-import { Button, Empty, Input, Select, Typography  } from 'antd';
+import { Button, Empty, Input, Select, Typography } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { CATEGORIES, IMAGE_POST_PREFIX } from '../../../shared/constants/app-const';
+import { CATEGORIES, IMAGE_POST_PREFIX, POST_STATUS } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
@@ -48,15 +48,18 @@ const NewPost = props => {
     }
   }
 
-  const onCreate = () => {
+  const onCreate = (postStatus = POST_STATUS.Active.id) => {
     if (!validateCreation()) {
       return;
     }
 
     var imageUrls = processImageUrls();
 
+    const request = { ...postObj, imageUrls };
+    request.status = postStatus;
+
     setLoading(true);
-    post('/admin/post', { ...postObj, imageUrls }, false)
+    post('/admin/post', request, false)
       .then(res => {
         if (res) {
           router.push('/admin/post-management');
@@ -66,15 +69,18 @@ const NewPost = props => {
       });
   }
 
-  const onUpdate = () => {
+  const onUpdate = (postStatus = POST_STATUS.Active.id) => {
     if (!validateCreation()) {
       return;
     }
 
     var imageUrls = processImageUrls();
 
+    const request = { ...postObj, imageUrls };
+    request.status = postStatus;
+
     setLoading(true);
-    put('/admin/post', { ...postObj, imageUrls }, false)
+    put('/admin/post', request, false)
       .then(res => {
         router.push('/admin/post-management');
       }).finally(() => {
@@ -106,7 +112,7 @@ const NewPost = props => {
 
   return <div className='new-post'>
     <div className='app-box'>
-      <h2>Tạo bài viết</h2>
+      <h2>{isEdit() ? 'Chỉnh sửa bài viết' : 'Tạo bài viết'}</h2>
       <b className='mt-5 d-block'>Tiêu đề:</b>
       <div className='mt-2'>
         <Input key='title' className='w-100' placeholder='Nhập tiêu đề...'
@@ -160,10 +166,10 @@ const NewPost = props => {
 
       <div className='mt-3'>
         <b>Thumbnail:</b>
-      
-          { isEdit() &&
-            <span> &nbsp;<Typography.Text type="secondary">(Chế độ edit sẽ không hiển thị thumbnail trước đó, nhưng vẫn có thể đổi thumbnail)</Typography.Text></span>
-          }
+
+        {isEdit() &&
+          <span> &nbsp;<Typography.Text type="secondary">(Chế độ edit sẽ không hiển thị thumbnail trước đó, nhưng vẫn có thể đổi thumbnail)</Typography.Text></span>
+        }
       </div>
       <div className='mt-2'>
         <ThumbnailUpload image={postObj.thumbnail} onChange={thumbnail => setPostObj({ ...postObj, thumbnail })}
@@ -177,9 +183,26 @@ const NewPost = props => {
 
       <div className='mt-5 pt-3 d-flex'>
         <div className='ms-auto'>
-          <Button key='btn-draft' type='default'>Lưu nháp</Button>
-          <Button key='btn-publish' className='ms-2' type='primary'
-            onClick={() => isEdit() ? onUpdate() : onCreate()}>Xuất bản</Button>
+          {!isEdit() &&
+            <>
+              <Button key='btn-draft' type='default' onClick={() => onCreate(POST_STATUS.Draft.id)}>Lưu nháp</Button>
+              <Button key='btn-publish' className='ms-2' type='primary'
+                onClick={() => onCreate()}>Xuất bản</Button>
+            </>
+          }
+
+          {isEdit() &&
+            <>
+              {postObj.status != POST_STATUS.Active.id &&
+                <Button key='btn-draft' className='ms-2' type='default'
+                  onClick={() => onUpdate(POST_STATUS.Draft.id)}>Lưu nháp</Button>
+              }
+
+              <Button key='btn-publish' className='ms-2' type='primary'
+                onClick={() => onUpdate()}>{postObj.status != POST_STATUS.Active.id ? 'Xuất bản' : 'Lưu'}</Button>
+            </>
+          }
+
           <Button key='btn-schedule' className='ms-2' type='primary' ghost onClick={() => alert('Chức năng này chưa có')}>Lên lịch</Button>
         </div>
       </div>
