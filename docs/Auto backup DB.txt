@@ -1,0 +1,4 @@
+1. Type crontab -e
+2. Put bellow command: 25 3 * * * mysqldump -u root -pvStation@123 NewsNext > /news/backup/DB/NewsNext_$(date +\%Y\%m\%d).sql
+3. sudo systemctl restart crond
+4. 
