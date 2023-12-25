@@ -7,8 +7,9 @@ const AdminLayout = ({ children }) => {
     <AuthContextProvider>
       <AppContextProvider>
         <div className='admin-layout'>
-          <AdminSidebar sidebarOpen={true} openSidebar={() => { }} />
-          {children}
+          <AdminSidebar sidebarOpen={true} openSidebar={() => { }} >
+            {children}
+          </AdminSidebar>
         </div>
       </AppContextProvider>
     </AuthContextProvider>

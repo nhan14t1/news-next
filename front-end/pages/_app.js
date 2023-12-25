@@ -4,7 +4,6 @@ import 'antd/dist/reset.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import '../styles/globals.scss';
-import '../styles/admin/admin-sidebar.css';
 import '../styles/app-box.scss';
 import '../styles/admin/new-post.scss';
 import '../styles/scrollbar.scss';
