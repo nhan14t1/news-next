@@ -24,6 +24,9 @@ namespace NEWS.Services.AutoMappings
                 }
                 )
                 .ReverseMap();
+            
+            CreateMap<User, UserDto>()
+                .ReverseMap();
         }
     }
 }

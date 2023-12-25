@@ -4,6 +4,7 @@
     {
         Admin = 1,
         User = 2,
+        Editor = 3
     }
 
     public enum PostStatus

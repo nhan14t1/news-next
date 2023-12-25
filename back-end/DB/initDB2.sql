@@ -9,6 +9,7 @@ CREATE TABLE `NewsNext`.User (
     LastName varchar(255) character set utf8mb4,
     Age int not null default 0,
     PhoneNumber varchar(255),
+    IsActive tinyint(1) not null default 0,
     PRIMARY KEY (Id)
 );
 
@@ -27,7 +28,7 @@ CREATE TABLE `NewsNext`.UserRole (
     FOREIGN KEY (RoleId) REFERENCES Role(Id)
 );
 
-INSERT INTO `NewsNext`.Role(`Name`) values ('Admin'), ('User');
+INSERT INTO `NewsNext`.Role(`Name`) values ('Admin'), ('User'), ('Editor');
 
 CREATE TABLE `NewsNext`.Category (
 	Id int NOT NULL AUTO_INCREMENT,

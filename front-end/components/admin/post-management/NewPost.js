@@ -181,7 +181,7 @@ const NewPost = props => {
         <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })} />
       </div>
 
-      <div className='mt-5 pt-3 d-flex'>
+      <div className='mt-5 pt-5 pt-sm-3 d-flex'>
         <div className='ms-auto'>
           {!isEdit() &&
             <>

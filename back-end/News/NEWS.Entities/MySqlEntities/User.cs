@@ -21,6 +21,8 @@ public partial class User
 
     public string? PhoneNumber { get; set; }
 
+    public bool IsActive { get; set; }
+
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

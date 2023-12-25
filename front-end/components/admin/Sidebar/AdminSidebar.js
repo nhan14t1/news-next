@@ -29,7 +29,7 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
   const { user, isSSR } = useContext(AuthContext);
   const { loading } = useContext(AppContext);
   const isAdmin = () => {
-    return user && user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.Name);
+    return user && user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.name);
   }
 
   const [selectedKey, setSelectedKey] = useState(MENU_ITEMS.post.key);

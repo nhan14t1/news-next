@@ -4,8 +4,9 @@ export const BASE_THUMBNAIL_URL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/image
 export const WEB_NAME = 'Showbiz 365';
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const ROLES = {
-  Admin: { id: 1, Name: 'Admin'},
-  User: { id: 2, Name: 'User'},
+  Admin: { id: 1, name: 'Admin'},
+  User: { id: 2, name: 'User'},
+  Editor: { id: 3, name: 'Editor'},
 };
 
 export const CATEGORIES = {

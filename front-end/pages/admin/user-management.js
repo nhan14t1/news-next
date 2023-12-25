@@ -1,19 +1,20 @@
 import Head from "next/head";
 import AdminLayout from "../../components/admin/AdminLayout";
 import { WEB_NAME } from "../../shared/constants/app-const";
+import UserManagement from "../../components/admin/user-management/UserManagement";
 
-function UserManagement() {
-    return <>
-        <Head>
-            <title>{`Quản lý người dùng - ${WEB_NAME}`}</title>
-        </Head>
+function UserManagementPage() {
+  return <>
+    <Head>
+      <title>{`Quản lý người dùng - ${WEB_NAME}`}</title>
+    </Head>
 
-        Works
-    </>;
+    <UserManagement />
+  </>;
 }
 
-UserManagement.getLayout = function (page) {
-    return <AdminLayout>{page}</AdminLayout>;
+UserManagementPage.getLayout = function (page) {
+  return <AdminLayout>{page}</AdminLayout>;
 }
 
-export default UserManagement;
+export default UserManagementPage;
