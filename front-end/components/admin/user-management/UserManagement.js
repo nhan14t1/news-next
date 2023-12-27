@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Result, Table, Typography } from "antd";
+import { Button, Card, Table, Typography } from "antd";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import Link from "next/link";
 import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../../shared/contexts/AppContext";
 import { deleteAPI, get } from "../../../shared/utils/apiUtils";
-import { CATEGORIES, POST_STATUS, ROLES } from "../../../shared/constants/app-const";
+import { ROLES } from "../../../shared/constants/app-const";
 import * as moment from 'moment'
 import { deleteConfirm, successAlert } from "../../../shared/utils/alertUtils";
 import UserModal from "./UserModal";
