@@ -3,7 +3,7 @@ import { Button, Card, Table, Typography } from "antd";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../../shared/contexts/AppContext";
-import { deleteAPI, get } from "../../../shared/utils/apiUtils";
+import { deleteAPI, get, put } from "../../../shared/utils/apiUtils";
 import { ROLES } from "../../../shared/constants/app-const";
 import * as moment from 'moment'
 import { deleteConfirm, successAlert } from "../../../shared/utils/alertUtils";
@@ -62,8 +62,15 @@ const UserManagement = () => {
         return <>
           <Button key={`btnUpdate${item.id}`} type="primary" size="small"
             onClick={() => userModalRef.current.showModal(item)}>Sửa</Button> &nbsp;
-          <Button key={`btnDelete${item.id}`} type="primary" danger className="mt-1"
-            onClick={() => onDeleteClicked(item.id)} size="small">Hủy</Button>
+          {item.isActive &&
+            <Button key={`btnDelete${item.id}`} type="primary" danger className="mt-1"
+              onClick={() => onDeactivateClicked(item.id)} size="small">Hủy</Button>
+          }
+
+          {!item.isActive &&
+            <Button key={`btnActivate${item.id}`} type="primary" ghost className="mt-1"
+              onClick={() => onActivateClicked(item.id)} size="small">Kích hoạt</Button>
+          }
         </>
       }
     },
@@ -84,13 +91,13 @@ const UserManagement = () => {
       }).finally(() => setLoading(false));
   }
 
-  const onDeleteClicked = (id) => {
+  const onDeactivateClicked = (id) => {
     deleteConfirm('Hủy người dùng', 'Bạn có muốn hủy người dùng này?', result => {
-      result && onDeletePost(id);
+      result && onDeactivate(id);
     });
   }
 
-  const onDeletePost = (id) => {
+  const onDeactivate = (id) => {
     setLoading(true);
 
     deleteAPI(`/admin/account/${id}`, false)
@@ -101,6 +108,27 @@ const UserManagement = () => {
           setData([...data]);
 
           successAlert(`Đã hủy tài khoản ${user.email}`);
+        }
+      }).finally(() => setLoading(false));
+  }
+  
+  const onActivateClicked = (id) => {
+    deleteConfirm('Kích hoạt người dùng', 'Bạn có muốn kích hoạt người dùng này?', result => {
+      result && onActivate(id);
+    });
+  }
+
+  const onActivate = (id) => {
+    setLoading(true);
+
+    put(`/admin/account/activate/${id}`, false)
+      .then(res => {
+        if (res && res.data) {
+          const user = data.find(_ => _.id == id);
+          user.isActive = true;
+          setData([...data]);
+
+          successAlert(`Đã kích hoạt ${user.email}`);
         }
       }).finally(() => setLoading(false));
   }
@@ -127,7 +155,7 @@ const UserManagement = () => {
 
       <Table dataSource={data} columns={columns} className="mt-2" />
       <UserModal ref={userModalRef} onCreated={user => setData([user, ...data])}
-        onUpdated={onUserUpdated}/>
+        onUpdated={onUserUpdated} />
     </Card>
   </>;
 }

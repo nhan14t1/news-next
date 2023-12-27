@@ -40,6 +40,14 @@ namespace NEWS.WebAPI.Controllers.Admin
             return Ok(user);
         }
 
+
+        [HttpPut("activate/{id}")]
+        public async Task<ActionResult> ActivateAsync(int id)
+        {
+            await _userService.ActivateAsync(id);
+            return Ok(true);
+        }
+
         [HttpPut]
         public async Task<ActionResult> UpdateAsync([FromBody] UserVM request)
         {
@@ -47,10 +55,11 @@ namespace NEWS.WebAPI.Controllers.Admin
             return Ok(user);
         }
 
-        // DELETE api/<AccountController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeactivateAsync(int id)
         {
+            await _userService.DeactivateAsync(id);
+            return Ok(true);
         }
     }
 }

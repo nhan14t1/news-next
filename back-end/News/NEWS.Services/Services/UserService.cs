@@ -249,5 +249,29 @@ namespace NEWS.Services.Services
             return _mapper.Map<List<UserDto>>(users);
         }
 
+        public async Task DeactivateAsync(int userId)
+        {
+            var user = await _repository.GetAll(_ => _.Id == userId)
+                .FirstOrDefaultAsync();
+
+            if (user.Email == "admin")
+            {
+                throw new BusinessException("Không thể hủy user 'admin'!");
+            }
+
+            user.IsActive = false;
+            await _unitOfWork.SaveChangesAsync();
+
+            // Block token
+        }
+
+        public async Task ActivateAsync(int userId)
+        {
+            var user = await _repository.GetAll(_ => _.Id == userId)
+                .FirstOrDefaultAsync();
+
+            user.IsActive = true;
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

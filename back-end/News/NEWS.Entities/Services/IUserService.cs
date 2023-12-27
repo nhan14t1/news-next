@@ -20,5 +20,9 @@ namespace NEWS.Entities.Services
         Task<UserDto> UpdateUserAsync(UserVM user);
 
         Task<List<UserDto>> GetAllAsync();
+
+        Task DeactivateAsync(int userId);
+
+        Task ActivateAsync(int userId);
     }
 }
