@@ -2,12 +2,13 @@
 {
     public class AppConst
     {
-        public static string[] APP_ROLES = { "Admin", "User" };
+        public static string[] APP_ROLE_NAMES = { "Admin", "User", "Editor" };
 
-        public static class AppRoles
+        public static class AppRoleNames
         {
-            public static string Admin = APP_ROLES[0];
-            public static string User = APP_ROLES[1];
+            public static string Admin = APP_ROLE_NAMES[0];
+            public static string User = APP_ROLE_NAMES[1];
+            public static string Editor = APP_ROLE_NAMES[2];
         }
 
         public static readonly DateTime BASE_DATE = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);

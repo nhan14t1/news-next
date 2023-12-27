@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Result, Table } from "antd";
+import { Button, Card, Result, Table, Typography } from "antd";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../../shared/contexts/AppContext";
 import { deleteAPI, get } from "../../../shared/utils/apiUtils";
-import { CATEGORIES, POST_STATUS } from "../../../shared/constants/app-const";
+import { CATEGORIES, POST_STATUS, ROLES } from "../../../shared/constants/app-const";
 import * as moment from 'moment'
 import { deleteConfirm, successAlert } from "../../../shared/utils/alertUtils";
 import UserModal from "./UserModal";
@@ -30,20 +30,22 @@ const UserManagement = () => {
     },
     {
       title: 'Chức vụ',
-      dataIndex: 'role',
-      key: 'role',
+      dataIndex: 'roleIds',
+      key: 'roleIds',
       render: (value, item) => {
-        const statusObj = Object.values(POST_STATUS).find(_ => _.id == value) || {};
-        return statusObj.name || '';
+        return (item.roleIds || [])
+          .map(id => {
+            const role = Object.values(ROLES).find(_ => _.id == id)
+            return <span className={`badge ${role.id == ROLES.Admin.id ? 'bg-success' : 'bg-info'} text-dark me-1`}>{role.name}</span>
+          });
       }
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'isActive',
+      key: 'isActive',
       render: (value, item) => {
-        const statusObj = Object.values(POST_STATUS).find(_ => _.id == value) || {};
-        return statusObj.name || '';
+        return <Typography.Text type={value ? 'success' : 'warning'}>{value ? 'Hoạt động' : 'Đã hủy'}</Typography.Text>
       }
     },
     {
@@ -59,9 +61,10 @@ const UserManagement = () => {
       key: 'actions',
       render: (_, item) => {
         return <>
-          <Button key={`btnUpdate${item.id}`} type="primary" size="small">Sửa</Button> &nbsp;
+          <Button key={`btnUpdate${item.id}`} type="primary" size="small"
+            onClick={() => userModalRef.current.showModal(item)}>Sửa</Button> &nbsp;
           <Button key={`btnDelete${item.id}`} type="primary" danger className="mt-1"
-            onClick={() => onDeleteClicked(item.id)} size="small">Xóa</Button>
+            onClick={() => onDeleteClicked(item.id)} size="small">Hủy</Button>
         </>
       }
     },
@@ -83,7 +86,7 @@ const UserManagement = () => {
   }
 
   const onDeleteClicked = (id) => {
-    deleteConfirm('Xóa người dùng', 'Ư', result => {
+    deleteConfirm('Hủy người dùng', 'Bạn có muốn hủy người dùng này?', result => {
       result && onDeletePost(id);
     });
   }
@@ -91,16 +94,14 @@ const UserManagement = () => {
   const onDeletePost = (id) => {
     setLoading(true);
 
-    deleteAPI(`/admin/post/${id}`, false)
+    deleteAPI(`/admin/account/${id}`, false)
       .then(res => {
         if (res && res.data) {
-          const index = data.findIndex(_ => _.id == id);
-          if (index > -1) {
-            data.splice(index, 1);
-            setData([...data]);
-          }
+          const user = data.find(_ => _.id == id);
+          user.isActive = false;
+          setData([...data]);
 
-          successAlert('Xóa thành công');
+          successAlert(`Đã hủy tài khoản ${user.email}`);
         }
       }).finally(() => setLoading(false));
   }

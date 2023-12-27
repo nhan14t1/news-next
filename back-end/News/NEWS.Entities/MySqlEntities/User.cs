@@ -21,6 +21,8 @@ public partial class User
 
     public string? PhoneNumber { get; set; }
 
+    public long CreatedDate { get; set; }
+
     public bool IsActive { get; set; }
 
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();

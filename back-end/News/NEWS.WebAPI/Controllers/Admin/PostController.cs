@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
+using NEWS.Entities.Utils;
 using NEWS.WebAPI.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,7 +11,7 @@ namespace NEWS.WebAPI.Controllers.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Editor")]
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;

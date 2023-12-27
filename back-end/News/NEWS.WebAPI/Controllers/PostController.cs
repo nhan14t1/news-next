@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Constants;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
+using NEWS.Entities.Utils;
 using NEWS.Services.Services;
 
 namespace NEWS.WebAPI.Controllers
@@ -53,7 +54,7 @@ namespace NEWS.WebAPI.Controllers
         [HttpPut("views/{postId}")]
         public async Task<ActionResult> UpdateViews(int postId)
         {
-            var isAdmin = User.IsInRole(AppRoles.Admin.ToString());
+            var isAdmin = RoleUtils.ADMIN_EDITOR_ROLE_NAMES.Any(role => User.IsInRole(role));
 
             // Don't flag when admin view post
             if (!isAdmin)

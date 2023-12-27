@@ -26,6 +26,7 @@ namespace NEWS.Services.AutoMappings
                 .ReverseMap();
             
             CreateMap<User, UserDto>()
+                .ForMember(x => x.RoleIds, y => y.MapFrom(_ => _.UserRoles.Select(_ => _.RoleId)))
                 .ReverseMap();
         }
     }

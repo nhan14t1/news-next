@@ -17,6 +17,8 @@ namespace NEWS.Entities.Services
 
         Task<UserDto> CreateUserAsync(UserVM user);
 
+        Task<UserDto> UpdateUserAsync(UserVM user);
+
         Task<List<UserDto>> GetAllAsync();
     }
 }

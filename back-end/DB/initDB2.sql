@@ -9,6 +9,7 @@ CREATE TABLE `NewsNext`.User (
     LastName varchar(255) character set utf8mb4,
     Age int not null default 0,
     PhoneNumber varchar(255),
+    CreatedDate BigInt not null default 0,
     IsActive tinyint(1) not null default 0,
     PRIMARY KEY (Id)
 );

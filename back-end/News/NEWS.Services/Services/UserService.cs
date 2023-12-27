@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NEWS.Entities.Constants;
 using NEWS.Entities.Exceptions;
+using NEWS.Entities.Extensions;
 using NEWS.Entities.Models.Dto;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
@@ -68,18 +69,13 @@ namespace NEWS.Services.Services
             await CreateUserAsync(user, isAdmin);
         }
 
-        public async Task<UserDto> CreateUserAsync(UserVM user)
+        public async Task CreateUserAsync(User user, bool isAdmin = false)
         {
             if (string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.Password))
             {
                 throw new BusinessException("Email và mật khẩu không được trống");
             }
 
-            if (user.RoleId == 0)
-            {
-                throw new BusinessException("Vui lòng chọn chức vụ");
-            }
-
             var salt = CryptoUtils.GenerateBase64Salt();
             var password = CryptoUtils.SHA256Crypt(user.Password, salt);
 
@@ -92,51 +88,8 @@ namespace NEWS.Services.Services
                 LastName = user.LastName,
                 Age = user.Age,
                 PhoneNumber = user.PhoneNumber,
-                IsActive = user.IsActive,
-            };
-
-            try
-            {
-                await _unitOfWork.BeginTransaction();
-                _unitOfWork.DbContext.Add(newUser);
-                await _unitOfWork.SaveChangesAsync();
-                _unitOfWork.DbContext.Add(new UserRole
-                {
-                    UserId = newUser.Id,
-                    RoleId = user.RoleId,
-                });
-
-                await _unitOfWork.Commit();
-            }
-            catch (Exception e)
-            {
-                await _unitOfWork.RollBack();
-                throw;
-            }
-
-            return _mapper.Map<UserDto>(newUser);
-        }
-
-        public async Task CreateUserAsync(User user, bool isAdmin = false)
-        {
-            if (string.IsNullOrWhiteSpace(user.Email))
-            {
-                throw new Exception();
-            }
-
-            var salt = CryptoUtils.GenerateBase64Salt();
-            var password = CryptoUtils.SHA256Crypt(user.Password, salt);
-
-            var newUser = new User
-            {
-                Email = user.Email.ToLower(),
-                Salt = salt,
-                Password = password,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Age = user.Age,
-                PhoneNumber = user.PhoneNumber,
-                IsActive = user.IsActive,
+                IsActive = true,
+                CreatedDate = DateTime.Now.ToFileTime(),
             };
 
             try
@@ -168,9 +121,128 @@ namespace NEWS.Services.Services
             }
         }
 
+        private void ValidateCreation(UserVM user, bool isEdit = false)
+        {
+            if (string.IsNullOrWhiteSpace(user.Email) || (!isEdit && string.IsNullOrWhiteSpace(user.Password)))
+            {
+                throw new BusinessException("Email và mật khẩu không được trống");
+            }
+
+            if (user.RoleIds == null || !user.RoleIds.Any())
+            {
+                throw new BusinessException("Vui lòng chọn chức vụ");
+            }
+        }
+
+        public async Task<UserDto> CreateUserAsync(UserVM user)
+        {
+            ValidateCreation(user);
+            var salt = CryptoUtils.GenerateBase64Salt();
+            var password = CryptoUtils.SHA256Crypt(user.Password, salt);
+
+            var newUser = new User
+            {
+                Email = user.Email.ToLower(),
+                Salt = salt,
+                Password = password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Age = user.Age,
+                PhoneNumber = user.PhoneNumber,
+                IsActive = true,
+                CreatedDate = DateTime.Now.ToTimeStamp(),
+            };
+
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+                _unitOfWork.DbContext.Add(newUser);
+                await _unitOfWork.SaveChangesAsync();
+
+                foreach (var roleId in user.RoleIds)
+                {
+                    _unitOfWork.DbContext.Add(new UserRole
+                    {
+                        UserId = newUser.Id,
+                        RoleId = roleId,
+                    });
+                }
+
+                await _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                await _unitOfWork.RollBack();
+                throw;
+            }
+
+            return _mapper.Map<UserDto>(newUser);
+        }
+
+        public async Task<UserDto> UpdateUserAsync(UserVM request)
+        {
+            ValidateCreation(request, true);
+
+            // Avoid updating the user email.
+            var user = await _repository.GetAll(_ => _.Id == request.Id
+                && _.Email == request.Email)
+                .Include(_ => _.UserRoles)
+                .ThenInclude(_ => _.Role)
+                .FirstOrDefaultAsync();
+
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.Age = request.Age;
+            user.PhoneNumber = request.PhoneNumber;
+
+
+            // Update password also
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                user.Salt = CryptoUtils.GenerateBase64Salt();
+                user.Password = CryptoUtils.SHA256Crypt(request.Password, user.Salt);
+            }
+
+            var oldRoles = user.UserRoles;
+            var newRoleIds = request.RoleIds;
+
+            var createRoleIds = newRoleIds.Where(roleId => !oldRoles.Any(oldRole => oldRole.RoleId == roleId)).ToList();
+            var deleteRoles = oldRoles.Where(role => !newRoleIds.Any(id => id == role.RoleId)).ToList();
+
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+                _unitOfWork.DbContext.Update(user);
+
+                foreach (var roleId in createRoleIds)
+                {
+                    _unitOfWork.DbContext.Add(new UserRole
+                    {
+                        UserId = user.Id,
+                        RoleId = roleId,
+                    });
+                }
+
+                if (deleteRoles.Any())
+                {
+                    _unitOfWork.DbContext.RemoveRange(deleteRoles);
+                }
+
+                await _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                await _unitOfWork.RollBack();
+                throw;
+            }
+
+            return _mapper.Map<UserDto>(user);
+        }
+
         public async Task<List<UserDto>> GetAllAsync()
         {
             var users = await _repository.GetAll(_ => true)
+                .Include(_ => _.UserRoles)
                 .OrderByDescending(_ => _.Id)
                 .ToListAsync();
 

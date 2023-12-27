@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
-using NEWS.Services.Services;
-using NEWS.WebAPI.Services;
 
 namespace NEWS.WebAPI.Controllers.Admin
 {
@@ -42,10 +40,11 @@ namespace NEWS.WebAPI.Controllers.Admin
             return Ok(user);
         }
 
-        // PUT api/<AccountController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public async Task<ActionResult> UpdateAsync([FromBody] UserVM request)
         {
+            var user = await _userService.UpdateUserAsync(request);
+            return Ok(user);
         }
 
         // DELETE api/<AccountController>/5

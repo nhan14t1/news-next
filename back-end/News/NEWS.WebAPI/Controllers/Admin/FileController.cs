@@ -7,7 +7,7 @@ namespace NEWS.WebAPI.Controllers.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Editor")]
     public class FileController : ControllerBase
     {
         private IFileService _fileService;

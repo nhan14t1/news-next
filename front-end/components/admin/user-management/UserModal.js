@@ -25,12 +25,12 @@ const UserModal = ({ onCreated, onUpdated }, ref) => {
       return false;
     }
 
-    if (!user.password?.trim()) {
+    if (!isEdit && !user.password?.trim()) {
       errorAlert('Vui lòng nhập mật khẩu');
       return false;
     }
-    
-    if (!user.roleId) {
+
+    if (!user.roleIds || !user.roleIds.length) {
       errorAlert('Vui lòng chọn một chức vụ');
       return false;
     }
@@ -74,24 +74,26 @@ const UserModal = ({ onCreated, onUpdated }, ref) => {
       return;
     }
 
-    isEdit ? onCreate() : onUpdate();
+    !isEdit ? onCreate() : onUpdate();
   }
 
   useImperativeHandle(ref, () => ({
-    showModal() {
+    showModal(updateUser) {
+      setUser(Object.assign({}, updateUser || {}));
       setOpen(true);
     }
   }));
 
-  const roleOptions = [ROLES.Editor, ROLES.Admin].map(_ => ({ value: _.id, label: _.name }));
+  const roleOptions = Object.values(ROLES).map(_ => ({ value: _.id, label: _.name }));
 
-  return <Modal title={getTitle} onOk={() => { }} onCancel={() => { }}
-    open={open} footer={false} closeIcon={false} closable={false}>
+  return <Modal title={getTitle} open={open}
+    footer={false} closeIcon={false} closable={false}>
 
     <b className='d-block'>Email:</b>
     <div className='mt-2'>
       <Input key='email' className='w-100' placeholder='example@example.com'
         value={user.email}
+        disabled={isEdit}
         onChange={e => setUser({ ...user, email: e.target.value })} ></Input>
     </div>
 
@@ -110,9 +112,11 @@ const UserModal = ({ onCreated, onUpdated }, ref) => {
       <Select
         key='role'
         className="w-100"
+        mode="multiple"
+        allowClear
         placeholder="Chọn chức vụ"
-        value={user.roleId}
-        onChange={(e) => setUser({ ...user, roleId: e })}
+        value={user.roleIds}
+        onChange={(e) => setUser({ ...user, roleIds: e })}
         options={roleOptions}
       />
     </div>

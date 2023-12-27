@@ -28,6 +28,15 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
   const router = useRouter();
   const { user, isSSR } = useContext(AuthContext);
   const { loading } = useContext(AppContext);
+  const [admin, setAdmin] = useState(false);
+
+  const isAdminOrEditor = () => {
+    return user && (
+      user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.name)
+      || user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Editor.name)
+    );
+  }
+
   const isAdmin = () => {
     return user && user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.name);
   }
@@ -35,8 +44,13 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
   const [selectedKey, setSelectedKey] = useState(MENU_ITEMS.post.key);
 
   useEffect(() => {
-    if (!isSSR && !isAdmin()) {
-      router.push('/admin/login');
+    if (!isSSR) {
+      if (!isAdminOrEditor()) {
+        router.push('/admin/login');
+        return;
+      }
+
+      setAdmin(isAdmin());
     }
   }, [isSSR]);
 
@@ -66,19 +80,22 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
         >
           <div className={styles.logo}>
             <Link href={'/'}>
-              <img src='/assets/logo.svg' height={40}/>
+              <img src='/assets/logo.svg' height={40} />
             </Link>
           </div>
           <Menu theme="dark" className={styles.menu} selectedKeys={[selectedKey]}
-            onSelect={({key}) => setSelectedKey(key)}>
+            onSelect={({ key }) => setSelectedKey(key)}>
             <Menu.Item key={MENU_ITEMS.post.key}>
               <FontAwesomeIcon icon={faNewspaper} />
               <Link href={MENU_ITEMS.post.href}>Bài viết</Link>
             </Menu.Item>
-            <Menu.Item key={MENU_ITEMS.user.key}>
-              <FontAwesomeIcon icon={faUser} />
-              <Link href={MENU_ITEMS.user.href}>Người dùng</Link>
-            </Menu.Item>
+
+            {admin &&
+              <Menu.Item key={MENU_ITEMS.user.key}>
+                <FontAwesomeIcon icon={faUser} />
+                <Link href={MENU_ITEMS.user.href}>Người dùng</Link>
+              </Menu.Item>
+            }
           </Menu>
         </Sider>
 

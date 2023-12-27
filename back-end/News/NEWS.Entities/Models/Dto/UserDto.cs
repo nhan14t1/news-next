@@ -1,4 +1,6 @@
-﻿namespace NEWS.Entities.Models.Dto
+﻿using NEWS.Entities.MySqlEntities;
+
+namespace NEWS.Entities.Models.Dto
 {
     public class UserDto
     {
@@ -14,6 +16,10 @@
 
         public string? PhoneNumber { get; set; }
 
+        public long CreatedDate { get; set; }
+
         public bool IsActive { get; set; }
+
+        public List<int> RoleIds { get; set; }
     }
 }
