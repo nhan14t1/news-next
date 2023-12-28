@@ -11,5 +11,7 @@ namespace NEWS.Entities.Services
         Task<FileManagement> AddImages(string fileName, string fileExtension);
         
         Task<FileManagement> AddThumbnail(string fileName, string fileExtension);
+
+        Task<List<FileManagement>> GetUnusedFilesAsync();
     }
 }

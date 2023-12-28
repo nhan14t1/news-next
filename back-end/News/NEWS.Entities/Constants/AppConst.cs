@@ -15,5 +15,11 @@
         public static readonly DateTime BASE_DATE_UTC = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         public static readonly long MILISECOND_OF_DATE = 86400000;
         public static readonly string IMAGE_POST_PREFIX = "nqim-";
+
+        public static class FileTypeFolderPath
+        {
+            public const string PostImage = "wwwroot/images/posts/";
+            public const string PostThumbnail = "wwwroot/images/thumbnails/";
+        }
     }
 }

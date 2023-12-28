@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using NEWS.Entities.Extensions;
 using NEWS.Entities.Models.Others;
 using NEWS.Entities.MySqlEntities;
 using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
 using NEWS.Entities.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NEWS.Services.Services
 {
@@ -21,16 +16,16 @@ namespace NEWS.Services.Services
 
         }
 
-        public void CacheBlockedTokens()
+        public async Task CacheBlockedTokensAsync()
         {
-            var token = _repository.GetAll(_ => _.IsBlocked)
+            var token = await _repository.GetAll(_ => _.IsBlocked)
                 .AsNoTracking()
                 .GroupBy(_ => _.UserId)
                 .Select(x => new BlockedToken {
                     UserId = x.Key,
                     Tokens = x.Select(_ => _.Token).ToList()
                 })
-                .ToList();
+                .ToListAsync();
 
             TokenUtils.BLOCKED_TOKENS = token;
         }
@@ -91,6 +86,15 @@ namespace NEWS.Services.Services
             await _unitOfWork.SaveChangesAsync();
 
             AddCachingBlockedTokens(userId, userTokens.Select(_ => _.Token).ToList());
+        }
+
+        public async Task DeleteExpiredTokensAsync()
+        {
+            var now = DateTime.Now.ToTimeStamp();
+            var tokens = await _repository.GetAll(_ => _.ExpirationDate < now)
+                .ToListAsync();
+            _repository.DbContext.RemoveRange(tokens);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

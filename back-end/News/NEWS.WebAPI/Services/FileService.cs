@@ -1,7 +1,10 @@
-﻿using NEWS.Entities.Constants;
+﻿using Microsoft.AspNetCore.Hosting.Server;
+using NEWS.Entities.Constants;
 using NEWS.Entities.Models.Others;
+using NEWS.Entities.MySqlEntities;
+using NEWS.Entities.Services;
+using NEWS.Entities.Utils;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace NEWS.WebAPI.Services
 {
@@ -12,10 +15,20 @@ namespace NEWS.WebAPI.Services
         Task<FileInformation> UploadBase64Async(ImageInfo info, FileType type);
 
         Task<FileInformation> UploadThumbnailBase64Async(ImageInfo info);
+
+        Task DeletedUnusedFilesAsync();
     }
 
     public class FileService : IFileService
     {
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger _logger;
+
+        public FileService(IServiceProvider serviceProvider, ILogger<FileService> logger)
+        {
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+        }
 
         public async Task<FileInformation> UploadAsync(IFormFile file, FileType type, CancellationToken cancellationToken = default)
         {
@@ -46,7 +59,7 @@ namespace NEWS.WebAPI.Services
             memoryStream.Position = 0;
 
             // Write file to System path
-            var filePath = Path.Combine("wwwroot/", "images/posts/", fileName);
+            var filePath = Path.Combine($"{FileUtils.GetFolderPath(type)}/", fileName);
             using var fileStream = new FileStream(filePath, FileMode.Create);
 
             // Write Memory Stream to FileStream
@@ -70,7 +83,7 @@ namespace NEWS.WebAPI.Services
             var fileName = GenerateFileName(fileExtension, type);
 
             var bytes = Convert.FromBase64String(Regex.Replace(info.Base64, @"data:image/.*base64,", ""));
-            var filePath = Path.Combine("wwwroot/", "images/thumbnails/", fileName);
+            var filePath = Path.Combine($"{FileUtils.GetFolderPath(type)}/", fileName);
             await File.WriteAllBytesAsync(filePath, bytes);
 
             return new FileInformation
@@ -100,6 +113,40 @@ namespace NEWS.WebAPI.Services
                     return $"{AppConst.IMAGE_POST_PREFIX}{fileName}";
                 default:
                     return fileName;
+            }
+        }
+
+        public async Task DeletedUnusedFilesAsync()
+        {
+            var now = DateTime.UtcNow;
+            var fileManageService = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IFileManagementService>();
+            var files = await fileManageService.GetUnusedFilesAsync();
+            var errorCount = 0;
+            foreach (var file in files)
+            {
+                try
+                {
+                    DeleteFileFromDisk(file);
+                    await fileManageService.DeleteAsync(file);
+                }
+                catch (Exception e)
+                {
+                    errorCount++;
+                    _logger.LogError(e, $"Error when delete unused file - FileId: {file.Id} - {e.Message} - {e.StackTrace}");
+                }
+            }
+
+            var time = DateTime.UtcNow - now;
+            _logger.LogInformation($"Deleted unused file successfully - Time: {time.TotalMilliseconds}ms - Total: {files.Count} - Errors: {errorCount}");
+        }
+
+        private void DeleteFileFromDisk(FileManagement file)
+        {
+            string filePath = Path.Combine($"{FileUtils.GetFolderPath(file.Type)}/", file.Name);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
             }
         }
     }

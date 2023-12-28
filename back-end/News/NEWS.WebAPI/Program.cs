@@ -2,9 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using NEWS.Entities.Services;
 using NEWS.Services.AutoMappings;
 using NEWS.WebAPI.Extensions;
 using NEWS.WebAPI.JwtUtils;
@@ -79,14 +77,11 @@ services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-    //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 
 services.AddDatabase(configuration)
                 .AddRepositories()
                 .AddServices();
-
-//services.AddHostedService<TimedHostedService>();
 
 services.AddCors(options =>
 {
