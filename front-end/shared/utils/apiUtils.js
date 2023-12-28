@@ -83,22 +83,20 @@ const handleError = (error, isCatchError = true, showErrorAlert = true) => {
   if (res.status === 401) {
     // Clear cache
     // Remove old access token if have
-    // if (removeStoreLoggedUser) {
-    //   removeStoreLoggedUser();
-    // }
+    removeStoreLoggedUser();
 
-    // warningAlert('Your token has expired');
-    // setTimeout(() => {
-    //   // Navigate to login page
-    //   window.location.href = window.location.origin + '/admin/login';
-    // }, 2000);
-    // return;
+    showErrorAlert && warningAlert('Phiên đăng nhập hết hạn');
+    setTimeout(() => {
+      // Navigate to login page
+      window.location.href = window.location.origin + '/admin/login';
+    }, 2000);
+    return;
   }
 
   if (res.status === 403) {
     //
     // Navigate to forbidden page
-    window.location.href = window.location.origin + '/forbidden';
+    // window.location.href = window.location.origin + '/forbidden';
   }
 
   let messageError = res && res.data && res.data.message

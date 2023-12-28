@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NEWS.Entities.Exceptions;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
 using NEWS.Entities.Utils;

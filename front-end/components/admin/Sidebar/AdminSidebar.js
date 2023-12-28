@@ -11,6 +11,7 @@ import { Layout, Menu } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper, faUser } from '@fortawesome/free-solid-svg-icons';
 import styles from './AdminSidebar.module.scss';
+import { ROLE } from '../../../shared/constants/claim-const';
 
 const { Header, Content, Footer, Sider } = Layout;
 const MENU_ITEMS = {
@@ -32,13 +33,13 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
 
   const isAdminOrEditor = () => {
     return user && (
-      user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.name)
-      || user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Editor.name)
+      user[ROLE]?.includes(ROLES.Admin.name)
+      || user[ROLE]?.includes(ROLES.Editor.name)
     );
   }
 
   const isAdmin = () => {
-    return user && user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`].includes(ROLES.Admin.name);
+    return user && user[ROLE]?.includes(ROLES.Admin.name);
   }
 
   const [selectedKey, setSelectedKey] = useState(MENU_ITEMS.post.key);

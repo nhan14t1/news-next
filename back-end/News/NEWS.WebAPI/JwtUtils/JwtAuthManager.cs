@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using System.Text;
+using NEWS.Entities.Constants;
 
 namespace NEWS.WebAPI.JwtUtils
 {
@@ -19,7 +20,7 @@ namespace NEWS.WebAPI.JwtUtils
         void RemoveExpiredRefreshTokens(DateTime now);
         void RemoveRefreshTokenByUserName(string userName);
         (ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token);
-        Claim[] GetClaims(string userName, List<Role> roles);
+        Claim[] GetClaims(int userId, string userName, List<Role> roles);
     }
 
     public class JwtAuthManager : IJwtAuthManager
@@ -130,11 +131,12 @@ namespace NEWS.WebAPI.JwtUtils
             return Convert.ToBase64String(randomNumber);
         }
 
-        public Claim[] GetClaims(string userName, List<Role> roles)
+        public Claim[] GetClaims(int userId, string userName, List<Role> roles)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimConst.USER_ID, userId.ToString()),
             };
 
             if (roles != null)

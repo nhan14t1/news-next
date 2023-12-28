@@ -14,6 +14,16 @@ CREATE TABLE `NewsNext`.User (
     PRIMARY KEY (Id)
 );
 
+CREATE TABLE `NewsNext`.UserToken (
+    Id int NOT NULL AUTO_INCREMENT,
+    UserId INT NOT NULL,
+    Token varchar(1000) NOT NULL,
+    ExpirationDate BigInt not null,
+    IsBlocked tinyint(1) not null default 0,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (UserId) REFERENCES User(Id)
+);
+
 CREATE TABLE `NewsNext`.Role (
     Id int NOT NULL AUTO_INCREMENT,
     Name varchar(255) NOT NULL,

@@ -44,18 +44,23 @@ namespace NEWS.WebAPI.Middlewares
             context.Response.ContentType = "application/json";
 
             // Convert to model
-            var error = new ErrorResult("Sorry, an error has occurred");
+            var error = new ErrorResult(baseEx.Message);
             if (ex is BusinessException)
             {
                 context.Response.StatusCode = 700;
                 error.StatusCode = 700;
-                error.Message = baseEx.Message;
                 _logger.LogInformation(baseEx, $"{baseEx.Message} - {baseEx.StackTrace}");
+            }
+            else if (ex is UnauthorizedException)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                error.StatusCode = (int)HttpStatusCode.Unauthorized;
             }
             else
             {
                 context.Response.StatusCode = 500;
                 error.StatusCode = 500;
+                error.Message = "Sorry, an error has occurred";
                 _logger.LogError(baseEx, $"{baseEx.Message} - {baseEx.StackTrace}");
             }
 

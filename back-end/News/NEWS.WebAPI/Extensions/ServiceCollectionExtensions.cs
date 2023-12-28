@@ -43,6 +43,7 @@ namespace NEWS.WebAPI.Extensions
                 .AddScoped<ICategoryRepository, CategoryRepository>()
                 .AddScoped<IPostCategoryRepository, PostCategoryRepository>()
                 .AddScoped<IFileManagementRepository, FileManagementRepository>()
+                .AddScoped<IUserTokenRepository, UserTokenRepository>()
                 ;
         }
 
@@ -60,6 +61,7 @@ namespace NEWS.WebAPI.Extensions
                 .AddScoped<ICategoryService, CategoryService>()
                 .AddScoped<IPostCategoryService, PostCategoryService>()
                 .AddScoped<IFileManagementService, FileManagementService>()
+                .AddScoped<IUserTokenService, UserTokenService>()
                 ;
         }
     }

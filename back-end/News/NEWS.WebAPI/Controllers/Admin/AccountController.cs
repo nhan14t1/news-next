@@ -11,10 +11,13 @@ namespace NEWS.WebAPI.Controllers.Admin
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserTokenService _userTokenService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService,
+            IUserTokenService userTokenService)
         {
             _userService = userService;
+            _userTokenService = userTokenService;
         }
 
         // GET: api/<AccountController>
@@ -59,6 +62,7 @@ namespace NEWS.WebAPI.Controllers.Admin
         public async Task<ActionResult> DeactivateAsync(int id)
         {
             await _userService.DeactivateAsync(id);
+            await _userTokenService.BlockAllTokensAsycn(id);
             return Ok(true);
         }
     }

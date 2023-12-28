@@ -28,4 +28,6 @@ public partial class User
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+    public virtual ICollection<UserToken> UserTokens { get; set; } = new List<UserToken>();
 }

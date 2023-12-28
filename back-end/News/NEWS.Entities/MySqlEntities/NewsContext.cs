@@ -29,6 +29,8 @@ public partial class NewsContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
+    public virtual DbSet<UserToken> UserTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -164,6 +166,22 @@ public partial class NewsContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("userrole_ibfk_1");
+        });
+
+        modelBuilder.Entity<UserToken>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("UserToken");
+
+            entity.HasIndex(e => e.UserId, "UserId");
+
+            entity.Property(e => e.Token).HasMaxLength(1000);
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("usertoken_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

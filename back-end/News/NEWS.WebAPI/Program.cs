@@ -2,7 +2,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using NEWS.Entities.Services;
 using NEWS.Services.AutoMappings;
 using NEWS.WebAPI.Extensions;
 using NEWS.WebAPI.JwtUtils;
@@ -99,11 +101,15 @@ services.AddLogging(loggingBuilder =>
     loggingBuilder.AddSerilog();
 });
 
+
+services.AddHostedService<TimedHostedService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<TokenMiddleware>();
 
 app.UseCors("AllowAll");
 

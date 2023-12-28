@@ -16,13 +16,16 @@ namespace NEWS.WebAPI.Controllers
         private readonly IJwtAuthManager _jwtAuthManager;
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
+        private readonly IUserTokenService _userTokenService;
 
         public AccountController(IJwtAuthManager jwtAuthManager, IUserService userService,
-            IRoleService roleService)
+            IRoleService roleService,
+            IUserTokenService userTokenService)
         {
             _jwtAuthManager = jwtAuthManager;
             _userService = userService;
             _roleService = roleService;
+            _userTokenService = userTokenService;
         }
 
         [AllowAnonymous]
@@ -41,8 +44,14 @@ namespace NEWS.WebAPI.Controllers
 
             var user = await _userService.GetByEmailAsync(request.UserName);
             var roles = _roleService.GetByEmail(request.UserName);
-            var claims = _jwtAuthManager.GetClaims(request.UserName, roles);
+            var claims = _jwtAuthManager.GetClaims(user.Id, request.UserName, roles);
             var jwtResult = _jwtAuthManager.GenerateTokens(request.UserName, claims, DateTime.UtcNow);
+
+            await _userTokenService.AddAsync(new UserToken {
+                UserId = user.Id,
+                Token = jwtResult.AccessToken,
+                ExpirationDate = jwtResult.AccessTokenExprationTimestamp
+            });
 
             return Ok(new LoginResult
             {
