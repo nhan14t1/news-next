@@ -273,5 +273,16 @@ namespace NEWS.Services.Services
             user.IsActive = true;
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task ChangePasswordAsync(string email, string newPass)
+        {
+            var user = await _repository.GetAll(_ => _.Email == email).FirstOrDefaultAsync();
+            var salt = CryptoUtils.GenerateBase64Salt();
+            var password = CryptoUtils.SHA256Crypt(newPass, salt);
+            user.Password = password;
+            user.Salt = salt;
+
+            await _repository.UpdateAsync(user);
+        }
     }
 }

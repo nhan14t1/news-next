@@ -12,8 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper, faUser } from '@fortawesome/free-solid-svg-icons';
 import styles from './AdminSidebar.module.scss';
 import { ROLE } from '../../../shared/constants/claim-const';
+import AccountDropdown from '../components/account-dropdown/AccountDropdown';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 const MENU_ITEMS = {
   post: {
     key: 'post',
@@ -25,7 +26,7 @@ const MENU_ITEMS = {
   },
 }
 
-const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
+const AdminSidebar = ({ sidebarOpen, children }) => {
   const router = useRouter();
   const { user, isSSR } = useContext(AuthContext);
   const { loading } = useContext(AppContext);
@@ -84,6 +85,13 @@ const AdminSidebar = ({ sidebarOpen, closeSidebar, children }) => {
               <img src='/assets/logo.svg' height={40} />
             </Link>
           </div>
+
+          <div className='d-flex mb-3'>
+            <div className='m-auto'>
+              <AccountDropdown user={user}/>
+            </div>
+          </div>
+
           <Menu theme="dark" className={styles.menu} selectedKeys={[selectedKey]}
             onSelect={({ key }) => setSelectedKey(key)}>
             <Menu.Item key={MENU_ITEMS.post.key}>

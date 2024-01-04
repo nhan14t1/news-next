@@ -24,5 +24,7 @@ namespace NEWS.Entities.Services
         Task DeactivateAsync(int userId);
 
         Task ActivateAsync(int userId);
+
+        Task ChangePasswordAsync(string email, string newPass);
     }
 }

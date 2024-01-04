@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Exceptions;
+using NEWS.Entities.Extensions;
 using NEWS.Entities.Models.Responses;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.MySqlEntities;
@@ -56,7 +57,7 @@ namespace NEWS.WebAPI.Controllers
             return Ok(new LoginResult
             {
                 Id = user.Id,
-                UserName = request.UserName,
+                Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Roles = roles.Select(_ => new Role
@@ -80,24 +81,37 @@ namespace NEWS.WebAPI.Controllers
             return "OK";
         }
 
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<ActionResult> LogoutAsync()
+        {
+            var id = HttpContext.GetUserId();
+            var token = HttpContext.GetAccessToken();
+
+            await _userTokenService.BlockTokenAsync(id, token);
+            return Ok();
+        }
+
+        [HttpPut("password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword([FromBody] PasswordVM request)
+        {
+            var email = User.Identity?.Name;
+            if (!await _userService.ValidateUserAsync(email, request.OldPass))
+            {
+                throw new BusinessException("Mật khẩu cũ không đúng");
+            }
+
+            await _userService.ChangePasswordAsync(email, request.NewPass);
+            return Ok();
+        }
+
         [AllowAnonymous]
         [HttpGet("test")]
         public string Test()
         {
             return "OK";
         }
-
-        [HttpPost("logout")]
-        [Authorize]
-        public ActionResult Logout()
-        {
-            // optionally "revoke" JWT token on the server side --> add the current token to a block-list
-            // https://github.com/auth0/node-jsonwebtoken/issues/375
-
-            var userName = User.Identity?.Name;
-            return Ok();
-        }
-
         //[HttpPost("refresh-token")]
         //[Authorize]
         //public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequest request)

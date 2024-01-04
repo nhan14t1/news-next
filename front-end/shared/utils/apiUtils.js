@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { BASE_API_URL } from '../constants/app-const';
 import * as STORAGE_KEY from '../constants/storage-key-const';
-import { errorAlert, successAlert, warningAlert } from './alertUtils';
+import { errorAlert, warningAlert } from './alertUtils';
+import { removeStoreLoggedUser } from './accountUtils';
 
 const getOptions = () => {
   return {
@@ -106,8 +107,4 @@ const handleError = (error, isCatchError = true, showErrorAlert = true) => {
   if (isCatchError) {
     throw error;
   }
-}
-
-const removeStoreLoggedUser = () => {
-  localStorage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
 }

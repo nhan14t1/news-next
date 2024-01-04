@@ -76,7 +76,7 @@ namespace NEWS.Services.Services
                 && _.Tokens.Contains(token));
         }
 
-        public async Task BlockAllTokensAsycn(int userId)
+        public async Task BlockAllTokensAsync(int userId)
         {
             var userTokens = await _repository.GetAll(_ => _.UserId == userId
                 && !_.IsBlocked).ToListAsync();
@@ -95,6 +95,17 @@ namespace NEWS.Services.Services
                 .ToListAsync();
             _repository.DbContext.RemoveRange(tokens);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task BlockTokenAsync(int userId, string token)
+        {
+            var userToken = await _repository.GetAll(_ => _.UserId == userId
+                && _.Token == token).FirstOrDefaultAsync();
+            if (userToken != null)
+            {
+                userToken.IsBlocked = true;
+                await _repository.UpdateAsync(userToken);
+            }
         }
     }
 }

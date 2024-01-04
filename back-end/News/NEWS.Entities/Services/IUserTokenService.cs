@@ -10,8 +10,10 @@ namespace NEWS.Entities.Services
 
         bool IsTokenBlocked(int userId, string token);
 
-        Task BlockAllTokensAsycn(int userId);
+        Task BlockAllTokensAsync(int userId);
 
         Task DeleteExpiredTokensAsync();
+
+        Task BlockTokenAsync(int userId, string token);
     }
 }

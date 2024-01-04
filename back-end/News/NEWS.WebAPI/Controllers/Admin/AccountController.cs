@@ -62,7 +62,7 @@ namespace NEWS.WebAPI.Controllers.Admin
         public async Task<ActionResult> DeactivateAsync(int id)
         {
             await _userService.DeactivateAsync(id);
-            await _userTokenService.BlockAllTokensAsycn(id);
+            await _userTokenService.BlockAllTokensAsync(id);
             return Ok(true);
         }
     }
