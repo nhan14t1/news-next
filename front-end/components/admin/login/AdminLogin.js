@@ -16,7 +16,8 @@ const AdminLogin = () => {
       .then(res => {
         if (res && res.data) {
           saveInfo(res.data);
-          router.push('/admin/post-management');
+          // router.push('/admin/post-management');
+          window.location.href = '/admin/post-management';
         }
       })
   }
