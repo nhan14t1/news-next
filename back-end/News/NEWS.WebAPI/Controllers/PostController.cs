@@ -35,6 +35,13 @@ namespace NEWS.WebAPI.Controllers
             return Ok(data);
         }
 
+        [HttpGet("preview/{slug}")]
+        public async Task<ActionResult> GetPreviewBySlug(string slug)
+        {
+            var data = await _postService.GetBySlugAsync(slug, true);
+            return Ok(data);
+        }
+
         [HttpGet("site-map")]
         public async Task<ActionResult> GetPostMap()
         {

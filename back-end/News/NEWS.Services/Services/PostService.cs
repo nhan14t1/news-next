@@ -245,10 +245,10 @@ namespace NEWS.Services.Services
             };
         }
 
-        public async Task<PostDto> GetBySlugAsync(string slug)
+        public async Task<PostDto> GetBySlugAsync(string slug, bool isPreview = false)
         {
             slug = slug.ToLower();
-            var post = await _repository.GetAll(_ => _.Slug == slug && _.Status == (int)PostStatus.Active && !_.IsDeleted)
+            var post = await _repository.GetAll(_ => _.Slug == slug && (isPreview || _.Status == (int)PostStatus.Active) && !_.IsDeleted)
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();

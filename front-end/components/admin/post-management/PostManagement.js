@@ -8,15 +8,23 @@ import { deleteAPI, get } from "../../../shared/utils/apiUtils";
 import { CATEGORIES, POST_STATUS } from "../../../shared/constants/app-const";
 import * as moment from 'moment'
 import { deleteConfirm, successAlert } from "../../../shared/utils/alertUtils";
+import styles from './PostManagement.module.scss';
 
 const PostManagement = () => {
   const [data, setData] = useState([]);
 
   const columns = [
     {
-      title: 'Tiêu đề',
+      title: 'Tiêu đề (Click vào tiêu đề để xem)',
       dataIndex: 'title',
       key: 'title',
+      render: (title, item) => {
+        if (item.status == POST_STATUS.Active.id) {
+          return <Link href={`/article?id=${item.slug}`} target="_blank" className={styles.preview}>{title}</Link>
+        }
+
+        return <Link href={`/admin/post-management/preview?id=${item.slug}`} target="_blank" className={styles.preview}>{title}</Link>
+      }
     },
     {
       title: 'Người đăng',
@@ -32,7 +40,8 @@ const PostManagement = () => {
       key: 'status',
       render: (value, item) => {
         const statusObj = Object.values(POST_STATUS).find(_ => _.id == value) || {};
-        return statusObj.name || '';
+        return <span className={`badge ${value == POST_STATUS.Active.id ? 'bg-info' : 'bg-warning'} text-dark me-1`}>
+          {statusObj.name || ''}</span>;
       }
     },
     {
