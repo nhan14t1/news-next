@@ -23,7 +23,11 @@ public partial class NewsContext : DbContext
 
     public virtual DbSet<PostCategory> PostCategories { get; set; }
 
+    public virtual DbSet<PostTag> PostTags { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -118,6 +122,27 @@ public partial class NewsContext : DbContext
                 .HasConstraintName("postcategory_ibfk_1");
         });
 
+        modelBuilder.Entity<PostTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("PostTag");
+
+            entity.HasIndex(e => e.TagId, "TagId");
+
+            entity.HasIndex(e => new { e.PostId, e.TagId }, "post_tag_id").IsUnique();
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostTags)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("posttag_ibfk_1");
+
+            entity.HasOne(d => d.Tag).WithMany(p => p.PostTags)
+                .HasForeignKey(d => d.TagId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("posttag_ibfk_2");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -125,6 +150,22 @@ public partial class NewsContext : DbContext
             entity.ToTable("Role");
 
             entity.Property(e => e.Name).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("Tag");
+
+            entity.HasIndex(e => e.LowerText, "LowerText").IsUnique();
+
+            entity.Property(e => e.LowerText)
+                .HasMaxLength(50)
+                .UseCollation("utf8mb4_0900_ai_ci");
+            entity.Property(e => e.Text)
+                .HasMaxLength(50)
+                .UseCollation("utf8mb4_0900_ai_ci");
         });
 
         modelBuilder.Entity<User>(entity =>

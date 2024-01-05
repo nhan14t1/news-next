@@ -33,6 +33,8 @@ public partial class Post
 
     public virtual ICollection<PostCategory> PostCategories { get; set; } = new List<PostCategory>();
 
+    public virtual ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
+
     public virtual FileManagement? Thumbnail { get; set; }
 
     public virtual User User { get; set; } = null!;

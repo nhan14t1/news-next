@@ -88,3 +88,20 @@ CREATE TABLE `NewsNext`.PostCategory (
     FOREIGN KEY (PostId) REFERENCES Post(Id),
 	FOREIGN KEY (CategoryId) REFERENCES Category(Id)
 );
+
+CREATE TABLE `NewsNext`.Tag (
+	Id int NOT NULL AUTO_INCREMENT,
+    Text varchar(50) character set utf8mb4 NOT NULL,
+    LowerText varchar(50) character set utf8mb4 NOT NULL unique,
+    PRIMARY KEY (Id)
+);
+
+CREATE TABLE `NewsNext`.PostTag (
+	Id int NOT NULL AUTO_INCREMENT,
+    PostId int NOT NULL,
+    TagId int NOT NULL,
+    PRIMARY KEY (Id),
+    UNIQUE KEY `post_tag_id` (PostId, TagId),
+    FOREIGN KEY (PostId) REFERENCES Post(Id),
+    FOREIGN KEY (TagId) REFERENCES Tag(Id)
+);
