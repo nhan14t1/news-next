@@ -93,7 +93,7 @@ const NewPost = props => {
     // To make sure the regex won't detect 2 result into 1 result
     const content = (postObj.content || '').replaceAll(`<img`, `\n<img`);
 
-    const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(jpg|png|jpeg|bmp|svg)`, 'g');
+    const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(jpg|png|jpeg|bmp|svg|webp)`, 'g');
     return content.match(pattern);
   }
 
