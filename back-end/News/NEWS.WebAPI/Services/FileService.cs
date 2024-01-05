@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
 using NEWS.Entities.Constants;
+using NEWS.Entities.Exceptions;
 using NEWS.Entities.Models.Others;
 using NEWS.Entities.MySqlEntities;
 using NEWS.Entities.Services;
@@ -44,7 +45,7 @@ namespace NEWS.WebAPI.Services
             // validate the file extension type.
             if (!allowedFileTypes.Contains(fileExtension))
             {
-                throw new Exception($"File format {Path.GetExtension(file.FileName)} is invalid for this operation.");
+                throw new BusinessException($"Chỉ chấp nhận ảnh có đuôi {String.Join(", ", allowedFileTypes)} - Đuôi ảnh hiện tại: {Path.GetExtension(file.FileName)} ");
             }
 
             var fileName = GenerateFileName(fileExtension, type);
