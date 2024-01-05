@@ -23,3 +23,5 @@ export const POST_STATUS = {
 
 export const TEST_IMAGE_URL = 'assets/images/default.jpg';
 export const IMAGE_POST_PREFIX = 'nqim-';
+
+export const IMAGE_EXTENSIONS_ALLOWED = ['jpg', 'png', 'jpeg', 'bmp', 'svg', 'webp'];

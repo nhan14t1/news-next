@@ -1,6 +1,6 @@
 import { Button, Empty, Input, Select, Typography } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { CATEGORIES, IMAGE_POST_PREFIX, POST_STATUS } from '../../../shared/constants/app-const';
+import { CATEGORIES, IMAGE_EXTENSIONS_ALLOWED, IMAGE_POST_PREFIX, POST_STATUS } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
@@ -92,8 +92,9 @@ const NewPost = props => {
   const processImageUrls = () => {
     // To make sure the regex won't detect 2 result into 1 result
     const content = (postObj.content || '').replaceAll(`<img`, `\n<img`);
-
-    const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(jpg|png|jpeg|bmp|svg|webp)`, 'g');
+    
+    const imageExtensionsPattern = IMAGE_EXTENSIONS_ALLOWED.join('|');
+    const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(${imageExtensionsPattern})`, 'g');
     return content.match(pattern);
   }
 
@@ -159,10 +160,10 @@ const NewPost = props => {
         />
       </div>
 
-      <b className='mt-3 d-block'>Nhãn (Tùy chọn):</b>
+      {/* <b className='mt-3 d-block'>Nhãn (Tùy chọn):</b>
       <div className='mt-2'>
         <Input key='label' className='w-100' placeholder='Chưa có chức năng nhãn'></Input>
-      </div>
+      </div> */}
 
       <div className='mt-3'>
         <b>Thumbnail:</b>
@@ -176,7 +177,10 @@ const NewPost = props => {
           onCropped={base64 => onThumbnailChanged(base64)} onCancelled={() => setPostObj({ ...postObj, thumbnail: null })} />
       </div>
 
-      <div className='mt-3'><b>Nội dung:</b></div>
+      <div className='mt-3'>
+        <b>Nội dung:</b>
+        <Typography.Text type="secondary">&nbsp;(Sử dụng ảnh với định dạng [{IMAGE_EXTENSIONS_ALLOWED.join(', ')}], không chèn 2 ảnh trên cùng 1 dòng)</Typography.Text>
+      </div>
       <div className='mt-2'>
         <HtmlEditor key='html-editor' value={postObj.content} onChange={content => setPostObj({ ...postObj, content })} />
       </div>
