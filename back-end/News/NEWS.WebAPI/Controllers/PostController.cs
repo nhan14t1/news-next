@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NEWS.Entities.Constants;
+using NEWS.Entities.Models.Responses;
 using NEWS.Entities.Models.ViewModels;
 using NEWS.Entities.Services;
 using NEWS.Entities.Utils;
@@ -31,7 +32,14 @@ namespace NEWS.WebAPI.Controllers
         [HttpGet("{slug}")]
         public async Task<ActionResult> GetBySlug(string slug)
         {
-            var data = await _postService.GetBySlugAsync(slug);
+            var post = await _postService.GetBySlugAsync(slug);
+            var homeData = await _postService.GetHomePageData();
+
+            var data = new PostResult
+            {
+                Post = post,
+                RelatedData = homeData,
+            };
             return Ok(data);
         }
 

@@ -7,12 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { ScrollToTop } from '../components';
 import { appFetch, put } from '../shared/utils/apiUtils';
-import { BASE_THUMBNAIL_URL, WEB_NAME, BASE_URL } from '../shared/constants/app-const';
+import { BASE_THUMBNAIL_URL, WEB_NAME, BASE_URL, CATEGORIES, TEST_IMAGE_URL } from '../shared/constants/app-const';
+import Link from 'next/link';
+import RefCard from '../components/RefCard/RefCard';
 import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
 
-function Article({ news, query }) {
+function Article({ news, query, topPosts, vietNamPosts, globalPosts }) {
   const ADD_BOOKMARK = 'Add Bookmark';
   const REMOVE_BOOKMARK = 'Remove Bookmark';
 
@@ -28,13 +30,41 @@ function Article({ news, query }) {
 
   const countViews = () => {
     put(`/post/views/${news.id}`, null, true, false)
-      .then(res => {})
+      .then(res => { })
       .catch(err => console.log(err));
   }
 
   useEffect(() => {
     countViews();
-  }, [])
+  }, []);
+
+  const renderRelatedData = (data) => {
+    if (!data?.length) {
+      return <div className='pt-5'>Không có nội dung</div>
+    }
+
+    const selectedData = data.filter(_ => _.id != news?.id).slice(0, 3);
+    return <section>
+      {selectedData.map((item, index) => (
+        <>
+          <Link
+            key={`lnkNews${item.id}`}
+            href={{
+              pathname: `/article/`,
+              query: { id: item.slug },
+            }}
+          >
+            <RefCard
+              title={item.title}
+              headline={item.introText}
+              thumbnail={item.thumbnailFileName ? `${BASE_THUMBNAIL_URL}/${item.thumbnailFileName}` : TEST_IMAGE_URL}
+              bgColor={'#ddd'}
+            />
+          </Link>
+        </>
+      ))}
+    </section>
+  }
 
   const iconCalendar = <FontAwesomeIcon icon={faCalendarAlt} color='#3c3c3c' />;
 
@@ -63,6 +93,17 @@ function Article({ news, query }) {
               className={styles.content}
               dangerouslySetInnerHTML={{ __html: news.content }}
             />
+
+            <br />
+            <hr className={styles.divider} />
+            <h4 className='mt-4 mb-3'>Đọc nhiều nhất</h4>
+            {renderRelatedData(topPosts)}
+
+            <h4 className='mt-5 mb-3'>{CATEGORIES.VietNam.name}</h4>
+            {renderRelatedData(vietNamPosts)}
+
+            <h4 className='mt-5 mb-3'>{CATEGORIES.Global.name}</h4>
+            {renderRelatedData(globalPosts)}
           </article>
 
           <article className={styles.media_wrapper}>
@@ -90,7 +131,7 @@ function Article({ news, query }) {
   );
 }
 
-export async function getServerSideProps({query}) {
+export async function getServerSideProps({ query }) {
   const { id } = query;
   const data = await appFetch(`/post/${id}`);
   if (!data || data.isError) {
@@ -99,7 +140,9 @@ export async function getServerSideProps({query}) {
     };
   }
 
-  return { props: { news: data, query } };
+  const { post, relatedData } = data;
+  const { topPosts, vietNamPosts, globalPosts } = relatedData || {};
+  return { props: { news: post, topPosts, vietNamPosts, globalPosts, query } };
 }
 
 export default Article;
