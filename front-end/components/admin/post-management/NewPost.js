@@ -209,7 +209,7 @@ const NewPost = props => {
 
       <b className='mt-3 d-block'>
         Nhãn (Tùy chọn)&nbsp;
-        <Tooltip title='Gắn 1 vài từ khóa liên quan đến bài viết làm nhãn, những bài viết có nhãn giống nhau sẽ được đề xuất hiển thị ở mục "Bài viết liên quan" khi người dùng đọc tin tức.'>
+        <Tooltip title='Gắn 1 vài từ khóa liên quan đến bài viết làm nhãn, những bài viết có nhãn giống nhau sẽ được đề xuất hiển thị ở mục "Tin tức liên quan" khi người dùng đọc tin tức.'>
           <FontAwesomeIcon icon={faExclamationCircle} />
         </Tooltip>
       </b>

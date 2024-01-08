@@ -12,6 +12,7 @@ using NEWS.Entities.Services;
 using NEWS.Entities.UnitOfWorks;
 using NEWS.Entities.Exceptions;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace NEWS.Services.Services
 {
@@ -300,6 +301,7 @@ namespace NEWS.Services.Services
             slug = slug.ToLower();
             var post = await _repository.GetAll(_ => _.Slug == slug && (isPreview || _.Status == (int)PostStatus.Active) && !_.IsDeleted)
                 .Include(_ => _.Thumbnail)
+                .Include(_ => _.PostTags).ThenInclude(_ => _.Tag)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
@@ -370,6 +372,24 @@ namespace NEWS.Services.Services
                 .FirstOrDefaultAsync();
             post.Views += 1;
             await _repository.UpdateAsync(post);
+        }
+
+        public async Task<List<PostDto>> GetRelatedByTagIdsAsync(List<int> tagIds, int excludePostId = 0)
+        {
+            if (!tagIds.Any())
+            {
+                return new List<PostDto>();
+            }
+
+            var posts = await _repository.GetAll(post => post.PostTags.Any(postTag => tagIds.Contains(postTag.TagId))
+                && !post.IsDeleted && post.Status == (int)PostStatus.Active && post.Id != excludePostId)
+                .Include(_ => _.Thumbnail)
+                .AsNoTracking()
+                .OrderByDescending(post => post.Id)
+                .Take(8)
+                .ToListAsync();
+
+            return _mapper.Map<List<PostDto>>(posts);
         }
     }
 }

@@ -14,7 +14,7 @@ import * as moment from 'moment';
 
 const Toast = dynamic(() => import('../components/Toast/Toast'));
 
-function Article({ news, query, topPosts, vietNamPosts, globalPosts }) {
+function Article({ news, query, relatedPosts, topPosts, vietNamPosts, globalPosts }) {
   const ADD_BOOKMARK = 'Add Bookmark';
   const REMOVE_BOOKMARK = 'Remove Bookmark';
 
@@ -96,14 +96,34 @@ function Article({ news, query, topPosts, vietNamPosts, globalPosts }) {
 
             <br />
             <hr className={styles.divider} />
-            <h4 className='mt-4 mb-3'>Đọc nhiều nhất</h4>
-            {renderRelatedData(topPosts)}
 
-            <h4 className='mt-5 mb-3'>{CATEGORIES.VietNam.name}</h4>
-            {renderRelatedData(vietNamPosts)}
+            {!!relatedPosts?.length &&
+              <>
+                <h4 className='mt-4 mb-3'>Tin tức liên quan</h4>
+                {renderRelatedData(relatedPosts)}
+              </>
+            }
 
-            <h4 className='mt-5 mb-3'>{CATEGORIES.Global.name}</h4>
-            {renderRelatedData(globalPosts)}
+            {!relatedPosts?.length && topPosts?.length &&
+              <>
+                <h4 className='mt-4 mb-3'>Đọc nhiều nhất</h4>
+                {renderRelatedData(topPosts)}
+              </>
+            }
+
+            {!!vietNamPosts?.length &&
+              <>
+                <h4 className='mt-5 mb-3'>{CATEGORIES.VietNam.name}</h4>
+                {renderRelatedData(vietNamPosts)}
+              </>
+            }
+
+            {!!globalPosts?.length &&
+              <>
+                <h4 className='mt-5 mb-3'>{CATEGORIES.Global.name}</h4>
+                {renderRelatedData(globalPosts)}
+              </>
+            }
           </article>
 
           <article className={styles.media_wrapper}>
@@ -140,9 +160,9 @@ export async function getServerSideProps({ query }) {
     };
   }
 
-  const { post, relatedData } = data;
+  const { post, relatedPosts, relatedData } = data;
   const { topPosts, vietNamPosts, globalPosts } = relatedData || {};
-  return { props: { news: post, topPosts, vietNamPosts, globalPosts, query } };
+  return { props: { news: post, relatedPosts, topPosts, vietNamPosts, globalPosts, query } };
 }
 
 export default Article;

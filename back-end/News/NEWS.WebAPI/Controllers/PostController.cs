@@ -33,11 +33,13 @@ namespace NEWS.WebAPI.Controllers
         public async Task<ActionResult> GetBySlug(string slug)
         {
             var post = await _postService.GetBySlugAsync(slug);
+            var relatedPosts = await _postService.GetRelatedByTagIdsAsync(post.Tags.Select(_ => _.Id).ToList(), post.Id);
             var homeData = await _postService.GetHomePageData();
 
             var data = new PostResult
             {
                 Post = post,
+                RelatedPosts = relatedPosts,
                 RelatedData = homeData,
             };
             return Ok(data);

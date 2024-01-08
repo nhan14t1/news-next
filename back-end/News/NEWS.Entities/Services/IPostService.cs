@@ -24,5 +24,6 @@ namespace NEWS.Entities.Services
         Task<List<PostDto>> GetPostMap();
 
         Task UpdateViews(int postId);
+        Task<List<PostDto>> GetRelatedByTagIdsAsync(List<int> tagIds, int excludePostId = 0);
     }
 }
