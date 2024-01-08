@@ -288,6 +288,11 @@ namespace NEWS.Services.Services
                 .Take(8)
                 .ToListAsync();
 
+            // Save API size
+            vietNamPosts.ForEach(_ => _.Content = "");
+            globalPosts.ForEach(_ => _.Content = "");
+            topPosts.ForEach(_ => _.Content = "");
+
             return new HomePageResult
             {
                 VietNamPosts = _mapper.Map<List<PostDto>>(vietNamPosts),
@@ -388,6 +393,9 @@ namespace NEWS.Services.Services
                 .OrderByDescending(post => post.Id)
                 .Take(8)
                 .ToListAsync();
+
+            // Reduce API size
+            posts.ForEach(_ => _.Content = "");
 
             return _mapper.Map<List<PostDto>>(posts);
         }

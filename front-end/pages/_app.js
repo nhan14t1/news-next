@@ -1,3 +1,4 @@
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'nprogress/nprogress.css';
 import 'react-quill/dist/quill.snow.css';
 import 'antd/dist/reset.css';

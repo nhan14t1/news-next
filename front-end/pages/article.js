@@ -66,8 +66,6 @@ function Article({ news, query, relatedPosts, topPosts, vietNamPosts, globalPost
     </section>
   }
 
-  const iconCalendar = <FontAwesomeIcon icon={faCalendarAlt} color='#3c3c3c' />;
-
   return (
     <div className='container'>
       <Head>
@@ -84,7 +82,7 @@ function Article({ news, query, relatedPosts, topPosts, vietNamPosts, globalPost
           <article className={styles.content_wrapper}>
             {/* <Button onClick={handleClick}>{buttonText}</Button> */}
             <p className={styles.date}>
-              {iconCalendar} {moment(news.createdDate).format('DD/MM/YYYY')}
+              <FontAwesomeIcon icon={faCalendarAlt} color='#3c3c3c' /> {moment(news.createdDate).format('DD/MM/YYYY')}
             </p>
             <h2>{news.title}</h2>
             <h4>{news.introText}</h4>
