@@ -21,18 +21,21 @@ namespace NEWS.Services.Services
         private IFileManagementRepository _fileManagementRepository;
         private IMapper _mapper;
         private ILogger<PostService> _logger;
+        private ITagRepository _tagRepository;
 
         public PostService(IUnitOfWork unitOfWork,
             IUserRepository userRepository,
             IFileManagementRepository fileManagementRepository,
             IMapper mapper,
-            ILogger<PostService> logger)
+            ILogger<PostService> logger,
+            ITagRepository tagRepository)
             : base(unitOfWork)
         {
             _userRepository = userRepository;
             _fileManagementRepository = fileManagementRepository;
             _mapper = mapper;
             _logger = logger;
+            _tagRepository = tagRepository;
         }
 
         private async Task<bool> IsSlugExisted(string slug, int exceptPostId = 0)
@@ -41,6 +44,15 @@ namespace NEWS.Services.Services
                 .FirstOrDefaultAsync();
             
             return post != null;
+        }
+
+        private void SaveNewTags(List<Tag> tags)
+        {
+            // Add new tags
+            tags.Where(_ => _.Id == 0).ToList().ForEach(tag => {
+                tag.LowerText = tag.Text.ToLower();
+                _tagRepository.Add(tag);
+            });
         }
 
         public async Task<PostDto> AddAsync(PostVM request, string email, FileManagement thumbnail)
@@ -73,6 +85,9 @@ namespace NEWS.Services.Services
                 ? await _fileManagementRepository.GetAll(_ => !_.IsUsed && request.ImageUrls.Contains(_.Name)).ToListAsync()
             : new List<FileManagement>();
 
+            // Add new tags
+            SaveNewTags(request.Tags);
+
             try
             {
                 await _unitOfWork.BeginTransaction();
@@ -87,6 +102,17 @@ namespace NEWS.Services.Services
 
                 _unitOfWork.DbContext.Add(newPost);
                 await _unitOfWork.SaveChangesAsync();
+
+                foreach (var tag in request.Tags)
+                {
+                    var postTag = new PostTag
+                    {
+                        TagId = tag.Id,
+                        PostId = newPost.Id
+                    };
+
+                    _unitOfWork.DbContext.Add(postTag);
+                }
 
                 foreach (var postCategory in postCategories)
                 {
@@ -117,6 +143,7 @@ namespace NEWS.Services.Services
             var post = await _repository.GetAll(_ => _.Id == request.Id && !_.IsDeleted)
                 .Include(_ => _.Thumbnail)
                 .Include(_ => _.PostCategories)
+                .Include(_ => _.PostTags)
                 .FirstOrDefaultAsync();
 
             post.Title = request.Title;
@@ -147,6 +174,17 @@ namespace NEWS.Services.Services
             var images = request.ImageUrls != null
                 ? await _fileManagementRepository.GetAll(_ => !_.IsUsed && request.ImageUrls.Contains(_.Name)).ToListAsync()
             : new List<FileManagement>();
+
+            // Add new tags
+            SaveNewTags(request.Tags);
+
+            var postTagsToAdd = request.Tags.Where(tag => !post.PostTags.Any(postTag => tag.Id == postTag.TagId))
+                .Select(tag => new PostTag {
+                    TagId = tag.Id,
+                    PostId = post.Id
+                }).ToList();
+
+            var postTagsToDelete = post.PostTags.Where(postTag => !request.Tags.Any(tag => postTag.TagId == tag.Id)).ToList();
 
             try
             {
@@ -180,6 +218,16 @@ namespace NEWS.Services.Services
                     _unitOfWork.DbContext.RemoveRange(categoriesToDelete);
                 }
 
+                if (postTagsToAdd.Any())
+                {
+                    _unitOfWork.DbContext.AddRange(postTagsToAdd);
+                }
+
+                if (postTagsToDelete.Any())
+                {
+                    _unitOfWork.DbContext.RemoveRange(postTagsToDelete);
+                }
+
                 await _unitOfWork.SaveChangesAsync();
 
                 foreach (var image in images)
@@ -206,6 +254,8 @@ namespace NEWS.Services.Services
                 .Include(_ => _.User)
                 .Include(_ => _.PostCategories)
                 .ThenInclude(_ => _.Category)
+                .Include(_ => _.PostTags)
+                .ThenInclude(_ => _.Tag)
                 .OrderByDescending(_ => _.Id)
                 .ToListAsync();
 
@@ -266,6 +316,7 @@ namespace NEWS.Services.Services
             var post = await _repository.GetAll(_ => _.Id == id && !_.IsDeleted)
                 .Include(_ => _.Thumbnail)
                 .Include(_ => _.PostCategories).ThenInclude(_ => _.Category)
+                .Include(_ => _.PostTags).ThenInclude(_ => _.Tag)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 

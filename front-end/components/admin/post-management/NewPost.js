@@ -1,9 +1,9 @@
-import { Button, Empty, Input, Select, Typography } from 'antd';
+import { Button, Empty, Input, Select, Spin, Tooltip, Typography } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { CATEGORIES, IMAGE_EXTENSIONS_ALLOWED, IMAGE_POST_PREFIX, POST_STATUS } from '../../../shared/constants/app-const';
 import { toSlug } from '../../../shared/utils/stringUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 import { get, post, put } from '../../../shared/utils/apiUtils';
 import { useRouter } from 'next/router';
 import HtmlEditor from '../../shared/HtmlEditor';
@@ -12,10 +12,14 @@ import AppContext from '../../../shared/contexts/AppContext';
 import { useSearchParams } from 'next/navigation';
 import { compressBase64 } from '../../../shared/utils/imageCompressUtils';
 
+let tagTimeout;
+
 const NewPost = props => {
   const router = useRouter();
   const [postObj, setPostObj] = useState({});
   const [isError, setIsError] = useState(false);
+  const [searchTagLoading, setSearchTagLoading] = useState(false);
+  const [tagOptions, setTagOptions] = useState([]);
   const { setLoading } = useContext(AppContext);
 
   const categoryOptions = Object.values(CATEGORIES).map(_ => ({ value: _.id, label: _.name }));
@@ -35,6 +39,8 @@ const NewPost = props => {
         if (res && res.data) {
           const postObj = res.data;
           postObj.categoryIds = (postObj.categories || []).map(_ => _.id);
+          setTagOptions(postObj.tags.map(_ => ({ value: _.id, label: _.text })));
+          postObj.tags = postObj.tags.map(_ => _.id);
           setPostObj(postObj);
         }
       }).catch(err => {
@@ -48,14 +54,28 @@ const NewPost = props => {
     }
   }
 
+  const processOtherProperties = () => {
+    let imageUrls = processImageUrls();
+    let tags = postObj.tags || [];
+    tags = tags.map(item => {
+      if (!isNaN(item)) {
+        return { id: item };
+      }
+
+      return { text: item };
+    });
+
+    return { imageUrls, tags };
+  }
+
   const onCreate = (postStatus = POST_STATUS.Active.id) => {
     if (!validateCreation()) {
       return;
     }
 
-    var imageUrls = processImageUrls();
+    const otherProperties = processOtherProperties();
 
-    const request = { ...postObj, imageUrls };
+    const request = { ...postObj, ...otherProperties };
     request.status = postStatus;
 
     setLoading(true);
@@ -74,9 +94,9 @@ const NewPost = props => {
       return;
     }
 
-    var imageUrls = processImageUrls();
+    const otherProperties = processOtherProperties();
 
-    const request = { ...postObj, imageUrls };
+    const request = { ...postObj, ...otherProperties };
     request.status = postStatus;
 
     setLoading(true);
@@ -92,7 +112,7 @@ const NewPost = props => {
   const processImageUrls = () => {
     // To make sure the regex won't detect 2 result into 1 result
     const content = (postObj.content || '').replaceAll(`<img`, `\n<img`);
-    
+
     const imageExtensionsPattern = IMAGE_EXTENSIONS_ALLOWED.join('|');
     const pattern = new RegExp(`${IMAGE_POST_PREFIX}.*\.(${imageExtensionsPattern})`, 'g');
     return content.match(pattern);
@@ -105,6 +125,33 @@ const NewPost = props => {
   const onThumbnailChanged = async (base64) => {
     const compressedBase64 = await compressBase64(base64, 0.3, 500);
     setPostObj({ ...postObj, thumbnail: { ...postObj.thumbnail, base64: compressedBase64 } });
+  }
+
+  const onSearchTag = (keyword) => {
+    if (tagTimeout) {
+      clearTimeout(tagTimeout);
+      tagTimeout = null;
+    }
+
+    tagTimeout = setTimeout(() => searchTag(keyword), 400);
+  }
+
+  const searchTag = (keyword) => {
+    setTagOptions([]);
+    setSearchTagLoading(true);
+
+    post('/admin/tag/search', { keyword }, false)
+      .then(res => {
+        if (res) {
+          let options = (res.data || []).map(tag => ({
+            value: tag.id,
+            label: tag.text,
+          }));
+
+          options = options.length ? options : [{ value: keyword, label: keyword }];
+          setTagOptions(options);
+        }
+      }).finally(() => setSearchTagLoading(false));
   }
 
   if (isError) {
@@ -160,10 +207,29 @@ const NewPost = props => {
         />
       </div>
 
-      {/* <b className='mt-3 d-block'>Nhãn (Tùy chọn):</b>
+      <b className='mt-3 d-block'>
+        Nhãn (Tùy chọn)&nbsp;
+        <Tooltip title='Gắn 1 vài từ khóa liên quan đến bài viết làm nhãn, những bài viết có nhãn giống nhau sẽ được đề xuất hiển thị ở mục "Bài viết liên quan" khi người dùng đọc tin tức.'>
+          <FontAwesomeIcon icon={faExclamationCircle} />
+        </Tooltip>
+      </b>
       <div className='mt-2'>
-        <Input key='label' className='w-100' placeholder='Chưa có chức năng nhãn'></Input>
-      </div> */}
+        <Select
+          key='tag'
+          showSearch
+          mode="multiple"
+          allowClear
+          className='w-100'
+          value={postObj.tags}
+          placeholder={'Chọn 1 vài từ khóa liên quan'}
+          defaultActiveFirstOption={true}
+          onSearch={onSearchTag}
+          onChange={(e) => setPostObj({ ...postObj, tags: e })}
+          notFoundContent={<div className='py-2'>{searchTagLoading ? <Spin size="small" /> : null}</div>}
+          options={tagOptions}
+          filterOption={false}
+        />
+      </div>
 
       <div className='mt-3'>
         <b>Thumbnail:</b>

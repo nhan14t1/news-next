@@ -40,5 +40,7 @@ namespace NEWS.Entities.Models.Dto
         public string ThumbnailFileName { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+
+        public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }
 }

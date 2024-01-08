@@ -52,9 +52,12 @@ const PostManagement = () => {
       }
     },
     {
-      title: 'Tags',
+      title: 'Nhãn',
       dataIndex: 'tags',
       key: 'tags',
+      render: (tags, item) => {
+        return (tags || []).map(c => (<span className={`badge bg-info text-dark me-1`}>{c.text}</span>));
+      }
     },
     {
       title: 'Ngày tạo',

@@ -21,6 +21,12 @@ namespace NEWS.Services.AutoMappings
                         Id = _.CategoryId,
                         Name = _.Category?.Name
                     }).ToList();
+
+                    y.Tags = x.PostTags.Select(_ => new Tag
+                    {
+                        Id = _.TagId,
+                        Text = _.Tag?.Text
+                    }).ToList();
                 }
                 )
                 .ReverseMap();

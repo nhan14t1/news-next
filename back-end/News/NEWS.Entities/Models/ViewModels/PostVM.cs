@@ -8,5 +8,6 @@ namespace NEWS.Entities.Models.ViewModels
         public List<int> CategoryIds { get; set; }
         public List<string> ImageUrls { get; set; }
         public ImageInfo Thumbnail { get; set; }
+        public List<Tag> Tags { get; set; }
     }
 }
