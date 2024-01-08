@@ -49,11 +49,20 @@ namespace NEWS.Services.Services
 
         private void SaveNewTags(List<Tag> tags)
         {
-            // Add new tags
-            tags.Where(_ => _.Id == 0).ToList().ForEach(tag => {
-                tag.LowerText = tag.Text.ToLower();
-                _tagRepository.Add(tag);
-            });
+            try
+            {
+                // Add new tags
+                tags.Where(_ => _.Id == 0).ToList().ForEach(tag => {
+                    tag.LowerText = tag.Text.ToLower();
+                    _tagRepository.Add(tag);
+                });
+            }
+            catch (Exception ex)
+            {
+                // Error maybe happens when user type tag fastly.
+                _logger.LogError(ex, $"SaveNewTags error: {ex.Message} - {ex.StackTrace}");
+                throw new BusinessException("Có lỗi xảy ra khi lưu Nhãn, hãy thử xóa và nhập lại nhãn");
+            }
         }
 
         public async Task<PostDto> AddAsync(PostVM request, string email, FileManagement thumbnail)

@@ -137,6 +137,10 @@ const NewPost = props => {
   }
 
   const searchTag = (keyword) => {
+    if (keyword?.length < 2) {
+      return;
+    }
+
     setTagOptions([]);
     setSearchTagLoading(true);
 
