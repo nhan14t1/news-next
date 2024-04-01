@@ -15,6 +15,9 @@ class MyDocument extends Document {
           <meta property="og:type" content="article" />
           <meta property="og:locale" content="vi_VN" />
           <meta property="fb:app_id" content="24213169571660041" />
+          <meta name="google-adsense-account" content="ca-pub-3704994963081548" />
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3704994963081548"
+            crossOrigin="anonymous"></script>
         </Head>
         <body>
           <Main />
