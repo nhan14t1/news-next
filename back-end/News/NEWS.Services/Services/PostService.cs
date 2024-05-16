@@ -289,8 +289,7 @@ namespace NEWS.Services.Services
                 .Take(6)
                 .ToListAsync();
 
-            var lastMonth = DateTime.Now.ToTimeStamp() - AppConst.MILISECOND_OF_DATE * 60;
-            var topPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active && _.CreatedDate >= lastMonth)
+            var topPosts = await _repository.GetAll(_ => !_.IsDeleted && _.Status == (int)PostStatus.Active)
                 .Include(_ => _.Thumbnail)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.Views)
